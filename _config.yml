@@ -10,14 +10,14 @@ google_analytics: UA-106126503-1
 disqus_url: shikherverma.com
 disqus_id: shikherverma
 # register on feedburner and replace this url. Deleting the value will remove it from footer.
-feedburner_url: https://feedburner.google.com/fb/a/mailverify?uri=programmer-wannabe&amp;loc=en_US
+# feedburner_url: https://feedburner.google.com/fb/a/dashboard?id=nk98cjh3sm9jspb605qh24ks44
 
 # footer details. Deleting the value would remove it from footer.
 github_username:  wenhaiz
 email: zhaohnu@foxmail.com
 weibo_username: wenhai2015
 copyright_name: wenhaiz
-rss : true
+rss : false
 # facebook_username:  shikherverma42
 # stackoverflow_username: 6764571/shikher-verma
 # twitter_username : shikherverma42
