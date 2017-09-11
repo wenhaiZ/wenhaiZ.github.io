@@ -1,10 +1,10 @@
 # Site settings
-title: My Territory
-default_author: Shikher Verma
-description: "Online Territory of Shikher Verma"  # used in site head
+title: wenhaiz
+default_author: wenhaiz
+description: "安卓小开发仔"  # used in site head
 
 # register on google analytics and replace this token
-google_analytics: UA-75681059-1
+google_analytics: UA-106126503-1
 # disque comments are broken if you send http:// along with url, this url is same as the one given on disqus
 # Deleting the value would remove it from footer.
 disqus_url: shikherverma.com
@@ -13,15 +13,16 @@ disqus_id: shikherverma
 feedburner_url: https://feedburner.google.com/fb/a/mailverify?uri=programmer-wannabe&amp;loc=en_US
 
 # footer details. Deleting the value would remove it from footer.
-github_username:  shikherverma
-facebook_username:  shikherverma42
-email: root@shikherverma.com
-stackoverflow_username: 6764571/shikher-verma
-twitter_username : shikherverma42
-linkedin_username : shikherverma42
-keybase_username : shikherverma
-copyright_name: Shikher Verma
+github_username:  wenhaiz
+email: zhaohnu@foxmail.com
+weibo_username: wenhai2015
+copyright_name: wenhaiz
 rss : true
+# facebook_username:  shikherverma42
+# stackoverflow_username: 6764571/shikher-verma
+# twitter_username : shikherverma42
+# linkedin_username : shikherverma42
+# keybase_username : shikherverma
 
 # used for portfolio on home page
 collections:
@@ -38,7 +39,7 @@ port: 8888
 permalink: /blog/:title
 
 # jekyll-paginate. for paginating blog posts.
-paginate: 5
+paginate: 6
 paginate_path: blog/page:num
 
 # gem dependencies

@@ -1,0 +1,328 @@
+---
+title: Android 四大组件之 Service
+layout: post
+date: 2017-07-19 22:11:39 +0800 
+category: code
+published: false
+---
+### 简介
+Android 中的 Service 用于在后台处理任务，不需要与用户交互，例如后台下载文件、播放音乐等。    
+
+> 注意：Service 默认在托管进程的主线程中运行，因此如果执行耗时操作应该另开线程，或者使用 [IntentService](https://developer.android.google.cn/reference/android/app/IntentService.html).   
+
+### 创建并启动 Service   
+
+1. 继承 `Service` 类.如果 Service 只需要启动，那么只重写 `onStartCommand()` 方法即可.    
+
+>需要为`onBind()`提供默认实现，直接返回`null`即可   
+
+```java
+public class TestService extends Service {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        //init
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        //do something
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+}
+```
+>注意：`onStartCommand()`返回值必须为以下三个常量    
+> - `START_NOT_STICKY` 如果系统在 `onStartCommand()` 返回后终止服务，则除非有挂起 Intent 要传递，否则系统不会重建服务。
+> - `START_STICKY` 如果系统在 `onStartCommand()` 返回后终止服务，则会重建服务并调用 `onStartCommand()`，如果没有新的 Intent 要传递，那么会传递一个新的 Intent 来调用 `onStartCommand()`.。这适用于不执行命令、但无限期运行并等待作业的服务。
+> - `START_REDELIVER_INTENT`如果系统在 `onStartCommand()` 返回后终止服务，则会重建服务，并通过传递给服务的最后一个 Intent 调用 `onStartCommand()`。任何挂起 Intent 均依次传递。这适用于主动执行应该立即恢复的作业（例如下载文件）的服务。
+
+2. 在 `AnroidManifest.xml`的`<application>`元素下声明`<service>`元素   
+```
+<application>
+    <!--...其他组件...-->
+    <service
+        android:name=".TestService"
+        android:enabled="true"
+        android:exported="false">
+    </service>
+    <!--name 是 Service类名，enable 表示服务是否可用，exported 表示服务是否可以被其他应用启动-->
+<application/>
+```
+3. 启动 Service
+```
+//Activity 中的方法
+public void startService(View view) {
+    Intent intent = new Intent(this, TestService.class);
+    startService(intent);//将会创建 Service，调用 onStartCommand(),并传入 intent
+}
+```
+服务启动之后，其生命周期即独立于启动它的组件，并且可以在后台无限期地运行，即使启动服务的组件已被销毁也不受影响。 因此，服务应通过调用 `stopSelf()` 结束工作来自行停止运行，或者由另一个组件通过调用` stopService()` 来停止它。
+> 注意：如果服务同时处理多个 `onStartCommand()` 请求，则不应在处理完一个启动请求之后停止服务，因为可能已经收到了新的启动请求（在第一个请求结束时停止服务会终止第二个请求）。为了避免这一问题，可以使用 `stopSelf(int)` 确保**服务停止请求始终基于最近的启动请求**。也就说，在调用 `stopSelf(int)` 时，传递与停止请求的 ID 对应的启动请求的 ID（传递给 `onStartCommand() `的 `startId`）。如果在调用` stopSelf(int)` 之前服务收到了新的启动请求，ID 就不匹配，服务也就不会停止。
+## 创建并绑定 Service
+
+组件与服务绑定后可以与服务进行交互，比如发送请求、接收相应。实现绑定服务必须实现重写`onBind()`方法，返回`IBinder`作为客户端接口。客户端通过`bindService()`来与服务进行绑定，并需要实现一个`ServiceConnection`用于监听绑定状态。
+>多个客户端可同时连接到一个服务。但**只有在第一个客户端绑定时，系统才会调用服务的`onBind()`方法来检索`IBinder`**。系统随后不再调用`onBind()`，便可将同一 IBinder传递至其他绑定的客户端。当最后一个客户端取消与服务的绑定时，系统会将服务销毁(如果`onStartCommand()`没有被调用过的话)。
+1. 创建并声明服务
+```java
+public class MyService extends Service {
+    private MyBinder binder;
+    private int count = 0;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+    }
+
+    //绑定服务必须重写此方法，并返回 Ibinder 实例
+    @Override
+    public IBinder onBind(Intent intent) {
+        //创建 IBinder 实例
+        binder = new MyBinder();
+        //开启一个后台任务，每隔一秒更新一次count的值
+        final Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                count++;
+                binder.setMsg(count + "");
+                if (count > 30) {
+                    timer.cancel();
+                }
+
+            }
+        };
+        timer.schedule(task, 0, 1000);
+        //返回 IBinder 实例，作为客户端的接口
+        return binder;
+    }
+
+    //Binder 类实现了 IBinder
+    class MyBinder extends Binder {
+        private String msg = "";
+
+        public void setMsg(String msg) {
+            this.msg = msg;
+        }
+
+        public String getMsg() {
+            return this.msg;
+        }
+    }
+}
+```
+2. 绑定服务(`Messenger`,`AIDL`方式见**跨进程通信**)
+```java
+public class MainActivity extends AppCompatActivity {
+    private MyService.MyBinder mBinder;
+    //创建 ServiceConnection
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            //与服务绑定成功后回调，iBinder 就是 Service 的 onBinder方法返回的对象
+            mBinder = (MyService.MyBinder) iBinder;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            //与服务连接中断后回调
+
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    public void bindService(View view) {
+        //绑定服务，Context.BIND_AUTO_CREATE 表示如果服务还未创建则自动创建服务
+        bindService(new Intent(this, MyService.class), mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    public void getMsg(View view) {
+        String msg;
+        if (mBinder == null) {
+            msg = "请先绑定服务";
+        } else {
+            //通过IBinder与服务交互
+            msg = mBinder.getMsg();
+        }
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //解绑服务
+        unbindService(mConnection);
+    }
+}
+
+```
+> - 如果只需要在 Activity 可见时与服务交互，则应在 `onStart()` 期间绑定，在 `onStop()` 期间取消绑定
+> - 如果您希望 Activity 在后台停止运行状态下仍可接收响应，则可在` onCreate() `期间绑定，在 `onDestroy()` 期间取消绑定
+> - 尽量避免在 Activity 的 `onResume()` 和`onPause()` 期间绑定和取消绑定，因为每一次生命周期转换都会发生这些回调，会影响应用性能    
+## Service 生命周期   
+
+- 启动和绑定服务的生命周期   
+![服务生命周期](https://developer.android.google.cn/images/service_lifecycle.png)
+- 生命周期回调
+```
+public class ExampleService extends Service {
+    int mStartMode;       // onStartCommand()返回值，表示服务被系统销毁后的行为
+    IBinder mBinder;      // 客户端接口
+    boolean mAllowRebind; // 是否会调用onReBind()
+
+    @Override
+    public void onCreate() {
+        // 服务创建
+    }
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // 服务通过startService()启动
+        return mStartMode;
+    }
+    @Override
+    public IBinder onBind(Intent intent) {
+        //客户端通过bindService()与服务绑定
+        return mBinder;
+    }
+    @Override
+    public boolean onUnbind(Intent intent) {
+        // 所有绑定的客户端都通过unbindService()与服务解绑
+        return mAllowRebind;
+    }
+    @Override
+    public void onRebind(Intent intent) {
+        //客户端重新绑定，onUnbind()已经被调用并且返回true
+    
+    }
+    @Override
+    public void onDestroy() {
+        //服务被销毁
+    }
+}
+```
+
+- 允许绑定的已启动的服务生命周期     
+
+![允许绑定的已启动的服务生命周期](https://developer.android.google.cn/images/fundamentals/service_binding_tree_lifecycle.png)
+- 说明
+  - 服务的启动和绑定并不是独立的，客户端可以绑定要已经通过`startService()`启动的服务，并且在所有客户端与服务解绑之前，`stopService()`和`stopSelf()`并不能真正停止服务,只有等所有客户端都解绑后，服务才会停止并销毁
+  - `onUnbind()`方法返回`true`,在客户端再次绑定到服务时，会调用`onRebind()`。`onRebind()`返回`null`，但客户端仍然可以接收到`IBinder`接口；如果onUnbind()返回`false`,那么客户端再次帮顶时仍会调用`onBind()`
+## IntentService
+`IntentService` 使用**异步线程依次处理**发来的 Intent，`onBind()`方法默认返回` null`。
+- 使用方法:声明一个构造方法，并重写` onHandleIntent()`方法。
+```java
+public class MyIntentService extends IntentService {
+    /**
+     *
+     * @param name Used to name the worker thread, important only for debugging.
+     */
+    public MyIntentService(String name) {
+        super(name);
+    }
+
+    @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
+        //do work
+    }
+}
+```
+- 源码分析
+```java
+public abstract class IntentService extends Service {
+    private volatile Looper mServiceLooper;
+    private volatile ServiceHandler mServiceHandler;//handler
+    private String mName;//子线程名称
+    private boolean mRedelivery;
+
+    //内部Handler类
+    private final class ServiceHandler extends Handler {
+        public ServiceHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            //调用IntentService#onHandleIntent()
+            onHandleIntent((Intent)msg.obj);
+            //自动停止
+            stopSelf(msg.arg1);
+        }
+    }
+
+    /**
+     * 子类调用的构造方法，给mName赋值
+     */
+    public IntentService(String name) {
+        super();
+        mName = name;
+    }
+
+    /**
+     *设置Service被销毁后的行为
+     *mRedelivery=true,onStartCommand()返回START_REDELIVER_INTENT
+     *mRedelivery=false,onStartCommand()返回START_NOT_STICKY
+     */
+    public void setIntentRedelivery(boolean enabled) {
+        mRedelivery = enabled;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        //创建并启动子线程HandlerThread
+        HandlerThread thread = new HandlerThread("IntentService[" + mName + "]");
+        thread.start();
+        //以子线程的looper创建Handler
+        mServiceLooper = thread.getLooper();
+        mServiceHandler = new ServiceHandler(mServiceLooper);
+    }
+
+   
+    
+    //一般不需要重写，重写时需要调用super.onStartCommand()
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        //调用onStart()
+        onStart(intent, startId);
+        return mRedelivery ? START_REDELIVER_INTENT : START_NOT_STICKY;
+    }
+    
+    @Override
+    public void onStart(@Nullable Intent intent, int startId) {
+        //将intent和startId包装成Message,发送给子线程
+        Message msg = mServiceHandler.obtainMessage();
+        msg.arg1 = startId;
+        msg.obj = intent;
+        mServiceHandler.sendMessage(msg);
+    }
+
+    @Override
+    public void onDestroy() {
+        mServiceLooper.quit();
+    }
+
+    @Override
+    @Nullable
+    public IBinder onBind(Intent intent) {
+        //提供默认实现
+        return null;
+    }
+
+    /**
+     *这个方法实在子线程HandlerThread中执行的，也是需要我们重写的 
+     */
+    @WorkerThread
+    protected abstract void onHandleIntent(@Nullable Intent intent);
+}
+```
+在通过`startService()`启动后，`IntentService`会在`onCreate()`方法中创建启动子线程，并且创建子线程的handler.每次`onStartCommand()`被调用，都通过`onStart()`会向子线程发送消息，消息包含了`intent`和`startId`,子线程收到消息，会调用`onHandleIntent()`进行任务处理，之后调用`stopSelf(int startId)`自动停止服务。`startId`保证了服务会在处理完所有`intent`之后在会停止。
