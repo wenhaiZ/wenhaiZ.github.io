@@ -13,7 +13,7 @@ layout: default
                     <span class="subheading">
                         {% if page.description == "!!SHOWTAGSINSTEADOFDESCRIPTION!!" %}
                             {% for tag in page.tags %}
-                                <a href="/blog/tags/{{ tag }}" style="text-decoration: normal; font-weight: normal; color: #ffffff;"><i class="fa fa-tag"></i>{{ tag  }}&nbsp;</a>  
+                                <a href="/tags/{{ tag }}" style="text-decoration: normal; font-weight: normal; color: #ffffff;"><i class="fa fa-tag"></i>{{ tag  }}&nbsp;</a>  
                             {% endfor %}
                         {% else %}
                             {{ page.description }}

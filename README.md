@@ -1,37 +1,12 @@
-## CleanBlogEnhanced jekyll template
+# 个人博客
 [![Build Status](https://travis-ci.org/ShikherVerma/Shikherverma.github.io.svg?branch=master)](https://travis-ci.org/ShikherVerma/Shikherverma.github.io)
 
-CleanBlogEnhanced is a ready-to-use template to help you create an awesome website quickly. Perfect for personal blogs or simple project websites.
+这是我的个人博客，主要用于记录技术和生活。   
+   
+博客使用 [Jekyll](http://jekyllcn.com/) 搭建，博客模版来自 [Shikher Verma](https://github.com/ShikherVerma/Shikherverma.github.io)，非常感谢。
 
-Jekyll blog based on [Clean Blog](http://startbootstrap.com/template-overviews/clean-blog/).
+关于模版使用详情请浏览 Shikher Verma 的[这篇博客](http://shikherverma.com/blog/Yet-Another-Jekyll-Blog)。  
 
-List of features :
-* Subfolder for blog, landing page different than blog
-* Comments using Disqus
-* Website stats using Google Analytics
-* Email subscription using FeedBurner
-* Travis build script to verify build and external links
-* Read Time Estimation for blog posts
-* Blog post tags
-* Tag specific pages
-* Jekyll collection for portfolio
-* Serverless search using javascript
-* Minimalistic Error 404 page
-* A solid [guide](http://shikherverma.com/blog/Yet-Another-Jekyll-Blog) on how to customize or remove individual features.
-
-## Usage
-
-* Fork the repo
-* Rename to `username.github.io`
-* Modify the `_config` file
-* Replace all the posts and images with your data
-* In depth description of how to use this template is [here](http://shikherverma.com/blog/Yet-Another-Jekyll-Blog)
-
-## Questions, Bugs and Issues
-
-Have a question about this template ?  
-Or want to report a bug or an issue with this template?  
-[Open a new issue](https://github.com/ShikherVerma/shikherverma.github.io/issues) here on GitHub
 
 ## Copyright and License
 

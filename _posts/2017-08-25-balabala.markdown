@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "唠叨"
+title: "唠叨一篇"
 date: 2017-08-25 23:01:00 +0800
 tags: [Life]
 comments: true

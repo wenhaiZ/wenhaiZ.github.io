@@ -10,7 +10,7 @@ google_analytics: UA-106126503-1
 # disqus_url: shikherverma.com
 # disqus_id: shikherverma
 # register on feedburner and replace this url. Deleting the value will remove it from footer.
-# feedburner_url: https://feedburner.google.com/fb/a/dashboard?id=nk98cjh3sm9jspb605qh24ks44
+feedburner_url: https://feedburner.google.com/fb/a/mailverify?uri=wenhaiz&loc=en_US
 
 # footer details. Deleting the value would remove it from footer.
 github_username:  wenhaiz
@@ -36,11 +36,11 @@ markdown: kramdown
 highlighter: rouge
 exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
 port: 8888
-permalink: /blog/:title
+permalink: /:title
 
 # jekyll-paginate. for paginating blog posts.
 paginate: 6
-paginate_path: blog/page:num
+paginate_path: page:num
 
 # gem dependencies
 plugins: [jekyll-paginate, jekyll-feed, jekyll-gist，jekyll-seo-tag]
