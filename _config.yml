@@ -25,8 +25,8 @@ rss : false
 # keybase_username : shikherverma
 
 # used for portfolio on home page
-collections:
-  - portfolio
+# collections:
+#   - portfolio
 
 # used to estimate reading time
 wpm: 150
@@ -35,7 +35,7 @@ wpm: 150
 markdown: kramdown
 highlighter: rouge
 exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
-port: 8888
+port: 4000
 permalink: /:title
 
 # jekyll-paginate. for paginating blog posts.

@@ -6,8 +6,9 @@ tags: [SourceCode]
 comments: true
 subtitle: " V 8.7.0"
 published: true
----
+---  
 ![ButterKnife](https://github.com/JakeWharton/butterknife/raw/master/website/static/logo.png)
+
   
 [ButterKnife](https://github.com/JakeWharton/butterknife) 是 `Android` 大神 [Jake Wharthon](https://github.com/JakeWharton) 的杰作，用于 `Android` 开发中的视图和资源绑定，可以让我们省去写诸如 `findViewById()`，`setOnClickListener()`和`getString()` 等代码，提升开发效率。   
 这篇文章是我初步研究了项目源码后写的，只分析了视图绑定，所以只能算是源码简析。    
