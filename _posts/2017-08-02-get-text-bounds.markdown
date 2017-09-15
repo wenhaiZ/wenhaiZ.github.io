@@ -2,7 +2,7 @@
 layout: post
 title: "一个关于 paint.getTextBounds() 的假设"
 date: 2017-08-02 21:01:00 +0800
-tags: [ProblemRecord]
+tags: [ProblemRecord,Code]
 comments: true
 subtitle: "好的，假设成立，让我们来感谢一下那个不听话的字符 j 吧。"
 ---

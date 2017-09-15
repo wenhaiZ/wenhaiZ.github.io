@@ -4,9 +4,9 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <ul class="list-inline text-center">
-                    {% if site.rss %}
+                    {% if site.feedburner_url %}
                     <li>
-                        <a href="/feed.xml">
+                        <a href="{{site.feedburner_url}}">
                             <span class="fa-stack fa-lg">
                                 <i class="fa fa-circle fa-stack-2x"></i>
                                 <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
@@ -24,7 +24,7 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% if site.twitter_username %}
+                    <!-- {% if site.twitter_username %}
                     <li>
                         <a href="https://twitter.com/{{ site.twitter_username }}">
                             <span class="fa-stack fa-lg">
@@ -33,8 +33,8 @@
                             </span>
                         </a>
                     </li>
-                    {% endif %}
-                    {% if site.facebook_username %}
+                    {% endif %} -->
+                    <!-- {% if site.facebook_username %}
                     <li>
                         <a href="https://www.facebook.com/{{ site.facebook_username }}">
                             <span class="fa-stack fa-lg">
@@ -43,7 +43,7 @@
                             </span>
                         </a>
                     </li>
-                    {% endif %}
+                    {% endif %} -->
                     {% if site.github_username %}
                     <li>
                         <a href="https://github.com/{{ site.github_username }}">
@@ -54,7 +54,7 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% if site.stackoverflow_username %}
+                    <!-- {% if site.stackoverflow_username %}
                     <li>
                         <a href="https://stackoverflow.com/users/{{ site.stackoverflow_username }}">
                             <span class="fa-stack fa-lg">
@@ -63,9 +63,9 @@
                             </span>
                         </a>
                     </li>
-                    {% endif %}
+                    {% endif %} -->
                     
-                    {% if site.linkedin_username %}
+                    <!-- {% if site.linkedin_username %}
                     <li>
                         <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}">
                             <span class="fa-stack fa-lg">
@@ -74,7 +74,7 @@
                             </span>
                         </a>
                     </li>
-                    {% endif %}
+                    {% endif %} -->
                     {% if site.weibo_username %}
                     <li>
                         <a href="http://weibo.com/{{ site.linkedin_username }}">
@@ -97,11 +97,8 @@
                     {% endif %}
                 </ul>
                 <p class="copyright text-muted">
-                {% if site.feedburner_url %}
-                    {% include feedburner_subscribe.html %}
-                {% endif %}
                 {% if site.copyright_name %}
-                    <br> Copyright &copy; {{ site.copyright_name }} {{ site.time | date: '%Y' }}</p>
+                     Copyright &copy; {{ site.copyright_name }} {{ site.time | date: '%Y' }}</p>
                 {% endif %}
             </div>
         </div>

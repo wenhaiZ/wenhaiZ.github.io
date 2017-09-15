@@ -2,7 +2,7 @@
 layout: post
 title: "Handler 的正确使用"
 date: 2017-08-12 09:26:00 +0800
-tags: [UsingCorrectly]
+tags: [UsingCorrectly,Code]
 comments: true
 subtitle: "我们的目标是，没有 warning"
 published: true

@@ -1,12 +1,11 @@
 ---
 layout: page
-title: "Code"
-description: ""
-header-img: "img/blog-bg.jpg"
-tags: [ProblemRecord, UsingCorrectly,SourceCode] #list of tags that you want to show in description of blog
+title: "Life"
+description: "生活琐事"
+header-img: "img/tags/life.jpg"
 ---
 
-{% for post in site.tags.Code %}
+{% for post in site.tags.Life %}
 <div class="post-preview">
     <a href="{{ post.url }}">
         <h2 class="post-title">
@@ -23,8 +22,7 @@ tags: [ProblemRecord, UsingCorrectly,SourceCode] #list of tags that you want to 
 <hr>
 {% endfor %}
 
-<!-- 分页功能不能根据类别分页 -->
-<!-- Pager -->
+<!-- Pager-->
 <!-- {% if paginator.total_pages > 1 %}
 <ul class="pager">
     {% if paginator.previous_page %}

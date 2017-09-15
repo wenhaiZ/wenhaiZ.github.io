@@ -2,7 +2,7 @@
 title: "动态添加带有样式的控件"
 layout: post
 date: 2017-07-31 20:44:00 +0800
-tags: [ProblemRecord]
+tags: [ProblemRecord,Code]
 comments: true
 subtitle: "每次踩坑，都是一次成长"
 

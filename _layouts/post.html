@@ -12,9 +12,9 @@ layout: default
                     {% if page.subtitle %}
                     <h2 class="subheading">{{ page.subtitle }}</h2>
                     {% endif %}
-                    <span class="meta" style='margin-top:0.5em;'>Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.default_author }}{% endif %} on {{ page.date | date: "%A, %B %-d, %Y" }}
+                    <span class="meta" style='margin-top:0.5em;'>{% if post.author %}{{ post.author }}{% else %}{{ site.default_author }}{% endif %} 发表于 {{ page.date | date: "%Y年 %m月 %d日 %H时 %M分" }}
                     </span>
-                    <span class="meta" style='margin-top:0.5em;'> Tags: {% for tag in page.tags %}<a href="/tags/{{ tag }}"><i class="fa fa-tag"></i> {{ tag }}</a> {% endfor %} </span>
+                    <span class="meta" style='margin-top:0.5em;'> 标签： {% for tag in page.tags %}<a href="/tags/{{ tag }}"><i class="fa fa-tag"></i> {{ tag }}</a> {% endfor %} </span>
                     <span class="meta" style='margin-top:0.5em;'>
                         {% assign minutes = content | number_of_words | divided_by: site.wpm %}
                         <i class="fa fa-clock-o"></i>&nbsp;{% if minutes == 0 %}{% assign minutes = 1 %}{% endif %}
@@ -32,12 +32,15 @@ layout: default
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 {{ content }}
-                <br>
+
+                <!-- disqus 评论插件 -->
+                <!-- <br>
                 {% if page.comments %}
                     {% include disqus_comments.html %}
                 {% endif %}
-                <br>
-                <ul class="pager">
+                <br> -->
+                <!-- todo：根据类别指示前一篇和后一篇 -->
+                <!-- <ul class="pager">
                     {% if page.previous.url %}
                     <li class="previous">
                         <a href="{{ page.previous.url }}" data-toggle="tooltip" data-placement="top" title="{{page.previous.title}}">&larr; Previous Post</a>
@@ -48,7 +51,7 @@ layout: default
                         <a href="{{ page.next.url }}" data-toggle="tooltip" data-placement="top" title="{{page.next.title}}">Next Post &rarr;</a>
                     </li>
                     {% endif %}
-                </ul>
+                </ul> -->
 
             </div>
         </div>

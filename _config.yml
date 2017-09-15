@@ -41,7 +41,7 @@ permalink: /:title
 
 # jekyll-paginate. for paginating blog posts.
 paginate: 6
-paginate_path: page:num
+paginate_path: "page:num"
 
 # gem dependencies
 plugins: [jekyll-paginate, jekyll-feed, jekyll-gist，jekyll-seo-tag]
