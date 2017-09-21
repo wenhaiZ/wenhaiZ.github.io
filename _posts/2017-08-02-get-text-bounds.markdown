@@ -1,16 +1,16 @@
 ---
 layout: post
-title: "一个关于 paint.getTextBounds() 的假设"
+title: "paint.getTextBounds()中的坑"
 date: 2017-08-02 21:01:00 +0800
 tags: [Develop,Code]
 comments: true
-subtitle: "好的，假设成立，让我们来感谢一下那个不听话的字符 j 吧。"
+subtitle: "多亏了那个不听话的字符 j"
 ---
 最近在跟着 [HenCoder](http://hencoder.com/) （一个很贴心的技术博客，作者之前是 `Flipboard` 的 `Android` 工程师，现在全职做这个博客）学习 Android 中自定义 View 绘制的内容，这篇文章说的是我在练习过程中的一个小问题。
 
 在练习作者提供的 [ Demo](https://github.com/hencoder/PracticeDraw3)  时，有一项练习的要求是这样的：通过 `paint.getTextBounds()` 获取文字的边界信息，然后以此设置文字的绘制位置，使每个字符都要在矩形内垂直居中。   
 如图：
-![default_draw](/assets/img/default_draw.jpg)  
+![default_draw](/assets/img/post/default_draw.jpg)  
 上半部分是完成后的效果，下半部分是需要自己完成的。    
 
 在描述我遇到的问题之前，我想先简单介绍一下 `drawText()` 方法。
@@ -18,11 +18,11 @@ subtitle: "好的，假设成立，让我们来感谢一下那个不听话的字
 `drawText` 方法用于绘制文字。参数中的 `text` 是要绘制的文字，`paint` 是绘制时使用的画笔，`x` 和 `y`是文字的位置坐标，但这两个坐标里是有学问的。  
 
 为了使不同文字放在一起时看起来更美观协调，Android 在绘制文字时采用了`基线（baseline）对齐`的方式，可以用下图很直观的解释这种方式。   
-![baseline](/assets/img/baseline.jpg)  
+![baseline](/assets/img/post/baseline.jpg)  
 图中的虚线就是文字的基线， `drawText()` 方法中传入的 `x`、`y` 就是 **基线起点** 的坐标（以 View 的左上角为坐标原点，下同）。同时，通过上图还可以看到，文字下边缘是可以超过基线的。
 
 当 `x` 和 `y` 都为 `0` 的时候的绘制情况如下图：  
-![start_baseline](/assets/img/start_baseline.jpg)
+![start_baseline](/assets/img/post/start_baseline.jpg)
 可以看到基线起点并没有紧贴着文字边缘而是留有一定的空隙，这是为了让文字之间不那么拥挤。
 
 更详细的知识就不多介绍了，现在只需记住两点：   
@@ -61,7 +61,7 @@ for (int i = 0; i < chars.length; i++) {
 }
 ```
 运行之后效果如下：
-![wrong_draw](/assets/img/wrong_draw.jpg)  
+![wrong_draw](/assets/img/post/wrong_draw.jpg)  
 这样看上去，别的字符都正常，唯独那个 `j` 出了问题。   
 这就有点奇怪了，如果是方法有问题，那为什么别的字符都正常呢？   
 
@@ -103,7 +103,7 @@ for (int i = 0; i < chars.length; i++) {
   
 那就先顺着作者的思路把图画一下。   
 这里只看 y 轴坐标，以字符 `A` 为例，通过 Log 可以看到，`A` 的 `bottom = 0`，简单画个草图：
-![A](/assets/img/A.jpg)
+![A](/assets/img/post/A.jpg)
 >由于暂时没有找到专业的工具，图画的难看了，不过现在还不是在意这些细节的时候。     
 
 图中左上角的 `A` 是 `getTextBounds()` 时的坐标位置，可以看出 `textMiddle` 就是文字中心线相对于 x 轴 ( y=0) 的位置，为负值；而 `yOffset` 是取 `textMiddle` 的相反值，也就是文字中心线相对于 x 轴的距离，是正的。
@@ -167,7 +167,7 @@ protected void onDraw(Canvas canvas) {
 ```
 
 接下来就是见证奇迹的时刻：
-![j](/assets/img/prove.jpg)
+![j](/assets/img/post/prove.jpg)
 可以看到，矩形完美的包围了字符 j ，说明假设是可以成立的。  
 之前计算的 `yOffset` 确实就是文字中心线与文字基线的距离。原来的基线向下偏移 `yOffset` ，文字中心线自然就与原来的基线在同一直线上了，而原来的基线就是矩形的水平中心线，这就是使字符在矩形内严格垂直居中的原理。当然，这还解释了 `textBound` 的 `bottom` 为什么可以大于 0 （字符的下边缘可以超过基线）。 
 
@@ -175,7 +175,7 @@ protected void onDraw(Canvas canvas) {
 
 ## 字符 j 到底经历了什么
 根据 Log 信息，`j` 的 `top = -116`，`bottom = 35`，画图如下:
-![j](/assets/img/j.jpg)
+![j](/assets/img/post/j.jpg)
 左上角的 `j` 是以（0，0）为基线起点绘制的，`yOffset` 为是中心线与基线之间的距离。   
 
 下面三个从左到右依次是默认情况（基线为矩形中心线）、垂直居中和错误情况。

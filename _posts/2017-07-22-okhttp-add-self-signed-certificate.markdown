@@ -12,7 +12,7 @@ subtitle: "困惑了很久的问题，终于有了答案。"
 ## 为 OkHttp 添加自证书
 ### 获得自签名证书  
 自签名（根）证书可以到要访问的网站下载，这里我用的是 [12306 的根证书](http://www.12306.cn/mormhweb/ggxxfw/wbyyzj/201106/srca12306.zip)，解压后会有一个 `srca.cer` 文件，把它复制到 Android 项目的 `resource/raw/`中。   
-![getCer](/assets/img/https/get_cer.jpg?raw=true)    
+![getCer](/assets/img/post//get_cer.jpg)    
 ### 开始配置   
 由于是 demo，我就直接在 Activity 中写了一个 `customTrust()` 方法，用于初始化　`OkHttpClient` 。  
 - `customTrust()`

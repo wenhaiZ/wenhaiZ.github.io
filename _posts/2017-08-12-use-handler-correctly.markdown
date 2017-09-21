@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 ## 碍眼的 Warning
 如果在 `Android Studio 2.3` 中写上面的代码，你会发现 `new Handler()` 那句出现了 `warning`，我使用的是 `Android Studio 3.0` ，`warning` 更加壮观：  
 
-![handler_warning](/assets/img/handler_warning.jpg)
+![handler_warning](/assets/img/post/handler_warning.jpg)
 
 看一下 warning 信息：  
 `This Handler class should be static or leaks might occur.`
@@ -83,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
 
 关于内存泄漏和内存溢出，你可以看一下[这篇文章](http://www.jianshu.com/p/e97ed5d8a403)。
 
-## 消息分发机制
->这篇文章不会详细介绍消息分发机制的全部内容，只会解释用到的部分。关于消息分发机制更详细的内容，可以参考[这篇博客](http://blog.csdn.net/guolin_blog/article/details/9991569)。
+## 消息机制
+>这篇文章不会详细介绍消息机制的全部内容，只会解释用到的部分。关于消息机制更详细的内容，可以参考我的[这篇博客](/handler-in-android)以及郭霖大神的[这篇博客](http://blog.csdn.net/guolin_blog/article/details/9991569)。
 
 Android 中每个 Looper 线程（创建线程时调用了 `Looper.prepare()` 和 `Looper.loop()`，UI 线程就是这样的线程）都有一个 `MessageQueue` 用于保存 `Message` 对象，`Looper` 通过 `loop()` 方法来获取 `Message` 并对其进行分发。   
 
@@ -168,7 +168,7 @@ Message next() {
             }
 
             //....
-        nextPollTimeoutMillis = 0;
+
     }
 }
 ```
@@ -191,7 +191,7 @@ Message next() {
 当 `Looper` 通过 `loop()` 获取 `Message` 时，由于 `MessageQueue` 的 `next()` 方法还在阻塞，所以 `Looper` 不会退出。   
 `MessageQueue` 中的 `msg` 持有 `Handler` 的引用，而 `Handler` 是通过非静态内部类的方式声明的，它会持有外部类也就是 `Activity` 的引用，而当前 `Activity` 已经退出了，本该由 `GC` 回收，但是由于 `Handler` 的引用，将不会被回收，这样就引发了内存泄漏。
 
-如果这种情况多次发生，那么用户在启动新应用时就可能会面临应用程序崩溃的问题，因为内存溢出了。
+如果这种情况多次发生，由于内存不能被回收，应用所占内存就会越来越多，那么应用在申请内存时可能会面临应用程序崩溃的问题，因为内存溢出了。
 
 ## 使用 Handler 的正确姿势 
 `Handler` 之所以会引发内存泄漏，归根结底还是因为声明时采用了**非静态内部类**的方式。  
