@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "使用 Cursor 时要注意的一件小事"
-date: 2017-09-21 22:29:00 +0800
+date: 2017-09-24 14:01:00 +0800
 tags: [Develop,Code]
 comments: true
 subtitle: "记录一个小 bug"
