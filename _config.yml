@@ -30,7 +30,7 @@ rss : false
 #   - portfolio
 
 # used to estimate reading time
-wpm: 150
+wpm: 100
 
 # Build settings
 markdown: kramdown
