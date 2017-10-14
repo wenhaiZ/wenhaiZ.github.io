@@ -14,7 +14,14 @@ layout: default
                     {% endif %}
                     <span class="meta" style='margin-top:0.5em;'>{% if post.author %}{{ post.author }}{% else %}{{ site.default_author }}{% endif %} 发表于 {{ page.date | date: "%Y年 %m月 %d日 %H时 %M分" }}
                     </span>
-                    <span class="meta" style='margin-top:0.5em;'> 标签： {% for tag in page.tags %}<a href="/tags/{{ tag }}"><i class="fa fa-tag"></i> {{ tag }}</a> {% endfor %} </span>
+                    <span class="meta" style='margin-top:0.5em;'> 标签：
+                         {% for tag in page.tags %}
+                            {% if tag == "Code"%}
+                                <a href="/"><i class="fa fa-tag"></i> {{ tag }}</a>
+                            {% else %}
+                                <a href="/tags/{{ tag }}"><i class="fa fa-tag"></i> {{ tag }}</a> 
+                            {% endif %}
+                        {% endfor %} </span>
                     <span class="meta" style='margin-top:0.5em;'>
                         {% assign minutes = content | number_of_words | divided_by: site.wpm %}
                         <i class="fa fa-clock-o"></i>&nbsp;{% if minutes == 0 %}{% assign minutes = 1 %}{% endif %}
