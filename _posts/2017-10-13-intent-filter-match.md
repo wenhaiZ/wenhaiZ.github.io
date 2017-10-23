@@ -2,7 +2,7 @@
 layout: post
 title: "IntentFilter 匹配规则"
 date: 2017-10-14 14:15:00 +0800
-tags: [Code,Develop]
+tags: [Code,Develop,Notes]
 subtitle: "action/category/data"
 ---
 在 Android 中可以通过显示和隐式 Intent 来启动 Activity、Service 和BroadcastReceiver。    
