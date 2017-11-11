@@ -3,7 +3,7 @@ layout: post
 title: "十月咸鱼记"
 date: 2017-10-29 10:29:00 +0800
 tags: [Life]
-subtitle: "犹豫不决是大忌"
+subtitle: ""
 ---
 还没到国庆假期我回家了，这是上大学以来除寒暑假外第一次中途回家。  
 
