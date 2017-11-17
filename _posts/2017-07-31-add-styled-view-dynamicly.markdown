@@ -4,7 +4,7 @@ layout: post
 date: 2017-07-31 20:44:00 +0800
 tags: [Develop,Code]
 comments: true
-subtitle: "每次踩坑，都是一次成长"
+subtitle: ""
 
 ---
 在 `Android` 中通过代码动态添加 `View` 并不困难，只不过比起在 `xml` 布局文件中声明布局参数，通过 `Java` 代码显得没有那么直观和方便，所以一般在布局明确的情况下，都会首选在 `xml` 中添加控件并设置参数。  

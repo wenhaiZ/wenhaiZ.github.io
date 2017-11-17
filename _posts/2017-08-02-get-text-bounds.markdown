@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "paint.getTextBounds()中的坑"
+title: "paint.getTextBounds() 的坑"
 date: 2017-08-02 21:01:00 +0800
 tags: [Develop,Code]
 comments: true
-subtitle: "多亏了那个不听话的字符 j"
+subtitle: "一个字符引发的喜剧"
 ---
 最近在跟着 [HenCoder](http://hencoder.com/) （一个很贴心的技术博客，作者之前是 `Flipboard` 的 `Android` 工程师，现在全职做这个博客）学习 Android 中自定义 View 绘制的内容，这篇文章说的是我在练习过程中的一个小问题。
 

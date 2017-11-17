@@ -4,7 +4,7 @@ title:  "使 OkHttp 信任自签名证书"
 date:   2017-09-02 16:37:39 +0800
 tags: [Develop,Code]
 comments: true
-subtitle: "困惑了很久的问题，终于有了答案。"
+subtitle: ""
 ---  
 
 在使用 `OkHttp` 向使用自签名证书的网站（比如:[12306](https://kyfw.12306.cn/otn/login/init)）发送请求时会直接失败，并且抛出一个 `SSLHandShakeException` 异常. 这是由证书认证失败导致的。之前遇到这个问题在网上东找西找了半天，最后才发现原来官方给了用于添加证书的 [Sample](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/okhttp3/recipes/CustomTrust.java)。我结合其他处理方案，把它整理记录下来，同时查阅文档对用到的 API 做一些解释。　　　

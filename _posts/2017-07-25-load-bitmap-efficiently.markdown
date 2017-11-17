@@ -4,7 +4,7 @@ title:  "Bitmap 的高效加载"
 date:   2017-08-04 15:43:39 +0800
 tags: [Notes,Code,Develop]
 comments: true
-subtitle: "解锁新分类"
+subtitle: ""
 ---
 >这篇博客来自我读 《Android 开发艺术探索》 第 12 章《Bitmap 的加载和 Cache》时的笔记，我对内容进行了一些整理和扩展。    
 
