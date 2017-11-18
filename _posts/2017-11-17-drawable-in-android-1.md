@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Android 中的 Drawable （一）"
-date: 2017-11-18 01:00:00 +0800
+date: 2017-11-17 01:00:00 +0800
 tags: [Code,Develop,Notes]
-subtitle: "一些可直接用于显示的 Drawable"
+subtitle: "一些可以直接用于显示的 Drawable"
 ---
 >我想用两篇文章结合我看的书籍和官方文档总结 Android 中 `Drawable` 的用法，以便查阅，这是第一篇。  
 
@@ -11,12 +11,12 @@ subtitle: "一些可直接用于显示的 Drawable"
 在 Android 开发中，`Drawable` 代表着一系列可绘制资源，它们通常用来作为 `View` 的背景或者 `ImageView` 等包含图像的 View 的显示内容，一般通过 XML 的形式定义，并且存放在项目的 `res/drawable` 目录下。   
 
 Drawable 有内部宽/高的概念，可通过 `getInstrinsicWidth/getInstrinsicHeight` 获取，但并不是所有 Drawable 都有内部宽高——如果 Drawable 对应一张图片，那么内部宽高就是图片的宽高，但像颜色/形状等 Drawable 默认没有内部宽高，此时 getInstrinsicWidth/getInstrinsicHeight 返回值为 `-1`。   
-还需要注意的是，*Drawable 的内部宽高并不是 Drawable 的实际大小，Drawable 作为 View 的背景时会被拉伸或压缩到与 View 同等大小。*  
+还需要注意的是，*Drawable 的内部宽高并不是 Drawable 的实际大小，Drawable 作为 View 的背景时会被拉伸或压缩到与 View 同等大小。*  Drawable 的实际大小可通过 `getBounds()` 方法获取，这个方法会返回一个 `Rect` 。 
 
 
 在开发中会用到很多种 Drawable，比如 BitmapDrawable,ShapeDrawable,StateListDrawable 等，它们都对应一个类，它们都是 Drawable 类的子类，Drawable 的所有子类可以查看[这篇文章](https://developer.android.google.cn/reference/android/graphics/drawable/Drawable.html)。 
 
-这篇文章主要介绍一些不用代码配置，可直接用于显示（比如作为 View 的背景）的 Drawable。 
+这篇文章主要介绍一些不用代码配置，可直接用于显示（比如作为 View 的背景）的 Drawable，关于其他 Drawable 的介绍在[第二篇博客](/drawable-in-android-2) 
 
 ## [BitmapDrawable](https://developer.android.google.cn/guide/topics/resources/drawable-resource.html#Bitmap) 
 `BitmapDrawable` 代表一张图片资源，一般可以通过 `R.drawable.file_name`直接使用，但是通过 `<bitmap>` 标签可以定义更多细节。    
@@ -84,6 +84,16 @@ Drawable 有内部宽/高的概念，可通过 `getInstrinsicWidth/getInstrinsic
 ```
 在 `.9` 图片里我们可以自定义需要拉伸的部分以及显示内容的区域，详情可以参考[这里](https://developer.android.google.cn/guide/topics/graphics/2d-graphics.html#nine-patch)。   
 BitmapDrawable 的属性同样适用于 NinePatchDrawable。
+## [ColorDrawable](https://developer.android.google.cn/guide/topics/resources/more-resources.html#Color)
+`ColorDrawable` 代表颜色资源，它在 `res/values/colors.xml` 中定义：
+```xml
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+</resources>
+```
+ColorDrawable 可通过 `R.drawable.color_name` 引用用。  
 
 ## [ShapeDrawable](https://developer.android.google.cn/guide/topics/resources/drawable-resource.html#Shape)
 `ShapeDrawable` 代表用纯色或渐变色填充的简单图形，例如矩形、圆形等，它通过`<shape>` 标签来定义，语法稍显复杂：
@@ -217,7 +227,8 @@ BitmapDrawable 的属性同样适用于 NinePatchDrawable。
 StateListDrawable 可设置的属性说明如下：
 - **android:dither**：**是否开启抖动**，与 BitmapDrawable 相同
 - **android:constantSize**：**StateListDrawable 的固有大小是否不随状态改变**，因为对应不同状态的 Drawable 可能具有不同的固有大小。如果为 true ，那么固有大小为所有 Drawable 的最大值。
-- **android:variablePadding**：**StateListDrawable 的 padding 是否随状态改变**，若为 false，则 padding 为所有 Drawable 的 padding 的最大值。
+- **android:variablePadding**：**StateListDrawable 的 padding 是否随状态改变**，若为 false，则 padding 为所有 Drawable 的 padding 的最大值。 
+
 
 ## [InsetDrawable](https://developer.android.google.cn/guide/topics/resources/drawable-resource.html#Inset)
 `InsetDrawable` 可以以一定距离插入其他 Drawable，对应标签`<inset>`,常用于 View 的背景比实际区域小的情况，声明语法：
@@ -235,5 +246,5 @@ StateListDrawable 可设置的属性说明如下：
 
 ## Refs
 1. [Android API Guides : Drawable Resource](https://developer.android.google.cn/guide/topics/resources/drawable-resource.html)
-3. [Reference  :Drawable](https://developer.android.google.cn/reference/android/graphics/drawable/Drawable.html)
+3. [Reference : Drawable](https://developer.android.google.cn/reference/android/graphics/drawable/Drawable.html)
 2. 《Android 开发艺术探索》 Chapter 6
