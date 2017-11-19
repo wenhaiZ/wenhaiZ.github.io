@@ -2,7 +2,7 @@
 layout: post
 title: "Android 中的序列化"
 date: 2017-09-18 23:08:00 +0800
-tags: [Notes,Code]
+tags: [Code,Android]
 comments: true
 subtitle: "Serializable & Pacelable"
 ---

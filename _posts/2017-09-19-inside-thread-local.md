@@ -2,7 +2,7 @@
 layout: post
 title: "ThreadLocal 原理分析"
 date: 2017-09-19 11:03:00 +0800
-tags: [SourceCode,Code]
+tags: [Code,Java]
 comments: true
 subtitle: "基于 JDK 1.8"
 ---

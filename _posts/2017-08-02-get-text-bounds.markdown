@@ -2,7 +2,7 @@
 layout: post
 title: "paint.getTextBounds() 的坑"
 date: 2017-08-02 21:01:00 +0800
-tags: [Develop,Code]
+tags: [Code,Android]
 comments: true
 subtitle: "一个字符引发的喜剧"
 ---

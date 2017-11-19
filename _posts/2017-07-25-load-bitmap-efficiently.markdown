@@ -2,7 +2,7 @@
 layout: post
 title:  "Bitmap 的高效加载"
 date:   2017-08-04 15:43:39 +0800
-tags: [Notes,Code,Develop]
+tags: [Code,Android]
 comments: true
 subtitle: ""
 ---

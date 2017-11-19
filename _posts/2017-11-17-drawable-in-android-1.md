@@ -2,7 +2,7 @@
 layout: post
 title: "Android 中的 Drawable （一）"
 date: 2017-11-17 01:00:00 +0800
-tags: [Code,Develop,Notes]
+tags: [Code,Android]
 subtitle: "一些可以直接用于显示的 Drawable"
 ---
 >我想用两篇文章结合我看的书籍和官方文档总结 Android 中 `Drawable` 的用法，以便查阅，这是第一篇。  

@@ -2,7 +2,7 @@
 title: "动态添加带有样式的控件"
 layout: post
 date: 2017-07-31 20:44:00 +0800
-tags: [Develop,Code]
+tags: [Code,Android]
 comments: true
 subtitle: ""
 

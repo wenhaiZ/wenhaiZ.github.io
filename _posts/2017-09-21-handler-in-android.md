@@ -2,7 +2,7 @@
 layout: post
 title: "Android 消息机制原理解析"
 date: 2017-09-21 22:29:00 +0800
-tags: [SourceCode,Code]
+tags: [Code,Android]
 comments: true
 subtitle: "Message/MessageQueue/Looper/Handler"
 ---

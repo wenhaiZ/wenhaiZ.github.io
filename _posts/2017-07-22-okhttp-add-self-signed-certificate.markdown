@@ -2,7 +2,7 @@
 layout: post
 title:  "使 OkHttp 信任自签名证书"
 date:   2017-09-02 16:37:39 +0800
-tags: [Develop,Code]
+tags: [Android,Code]
 comments: true
 subtitle: ""
 ---  
