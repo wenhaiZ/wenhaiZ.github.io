@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "paint.getTextBounds() 的坑"
+title: "我是怎么被 paint.getTextBounds() 坑的"
 date: 2017-08-02 21:01:00 +0800
 tags: [Code,Android]
 comments: true
