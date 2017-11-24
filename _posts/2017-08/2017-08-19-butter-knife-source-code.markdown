@@ -717,4 +717,4 @@ private MethodSpec createBindingConstructor(int sdk, boolean debuggable) {
 
 `ButterKnife` 是个实用又小巧的开源框架，它的代码量没有很多，非常适合作为练习阅读源码能力的项目，也建议大家可以去看一看，肯定会有很大的收获。   
 
-最后，还是感谢大神 Jake Wharthon 吧。(完)
+最后，还是感谢大神 Jake Wharthon 吧。

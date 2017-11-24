@@ -271,4 +271,4 @@ private Handler handler = new MyHandler(new WeakReference<>(this));
 其实，如果我们不通过 `Handler` 发送可能会在 `Activity` 退出后才分发的 `Message`，即使使用非静态内部类的形式声明 `Handler`，内存泄漏也不会发生。  
 但我们不能对编译器的 `warning` 视而不见，通过处理这些 `warning` ，也能让我们学到一些使用 API 的正确姿势。    
 
-毕竟，姿势很重要。(完)
+毕竟，姿势很重要。
