@@ -12,14 +12,13 @@ layout: default
                     <hr class="small">
                     <span class="subheading">
                         {% if page.description %}
-                        {{ page.description }}<br/>
+                            {{ page.description }}<br/>
                         {% endif %}
                         
                         {% if page.title == "Code" %}                      
-                        {% for tag in page.tags %}
-                            <a href="/tags/{{ tag }}" style="font-weight: normal; color: #ffffff;"><i class="fa fa-tag"></i>&nbsp;{{ tag  }}&nbsp;</a>  
-                        {% endfor %}
-                        
+                            {% for tag in page.tags %}
+                                <a href="/tags/{{ tag }}" style="font-weight: normal; color: #ffffff;"><i class="fa fa-tag"></i>&nbsp;{{ tag  }}&nbsp;</a>  
+                            {% endfor %}
                         {% endif %}
                         
                     </span>
