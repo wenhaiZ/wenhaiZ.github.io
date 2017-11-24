@@ -21,7 +21,7 @@ subtitle: "Serializable & Pacelable"
 ## 怎样进行序列化
 在 Android 中，实现序列化的方式就是让需要序列化的类实现特定的接口，并提供必要的实现，这样的接口有两个：
 - Serializable （Java）
-    - 优点：易于实现，类只需要实现 Serializable 接口，并指定一个 serialVersionUID (long型，标识当前类的版本，辅助序列化和反序列化，同时防止重复序列化)
+    - 优点：易于实现，类只需要实现 Serializable 接口，并指定一个 serialVersionUID (`long` 型，标识当前类的版本，辅助序列化和反序列化，同时防止重复序列化)
     - 缺点：基于反射，会产生大量临时变量，可能会触发GC，效率较低
 
 - Parcelable（Android 特有）  
@@ -41,7 +41,7 @@ subtitle: "Serializable & Pacelable"
 ```java
 class PlayStatus implements Serializable {
         //可以不指定
-        long serialVersionUID = 998;
+        static long serialVersionUID = 998;
 }
 ```
 
