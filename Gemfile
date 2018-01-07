@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
 group :jekyll_plugins do
   gem "jekyll-paginate"
@@ -6,6 +6,9 @@ group :jekyll_plugins do
   # gem "html-proofer"
   gem "rake"
   gem "jekyll-gist"
-  gem "github-pages"
-
+  #gem "github-pages"
+  gem "jekyll-seo-tag"
+  gem "jekyll-gist"
+  
 end
+
