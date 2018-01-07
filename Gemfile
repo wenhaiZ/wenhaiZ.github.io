@@ -6,7 +6,7 @@ group :jekyll_plugins do
   # gem "html-proofer"
   gem "rake"
   gem "jekyll-gist"
-  #gem "github-pages"
+  #gem "github-pages" using this cause error 'Could not open library 'libcurl' on windows
   gem "jekyll-seo-tag"
   gem "jekyll-gist"
   

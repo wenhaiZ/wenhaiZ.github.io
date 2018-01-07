@@ -9,7 +9,8 @@ subtitle: "To be Continued"
 
 ## 弹出软键盘
 Andorid 中的 `EditText` 在获取焦点时会主动弹出软键盘以供用户输入，我们也可以根据需要主动弹出软键盘，软键盘的弹出只需要三行代码就可以搞定：
-```kotlin
+```java
+//kotlin code
 fun showSoftInput() {
     //1.接收输入的 EditText 获取焦点（如果当前 EditText 已经获取焦点，可以省略）
     mEtSearch.requestFocus()
@@ -27,7 +28,8 @@ fun showSoftInput() {
 
 ## 收起软键盘
 收起键盘的操作同样需要用到 InputMethodManager，只是调用的方法不同：
-```kotlin
+```java
+//kotlin code
 fun hideSoftInput() {
     val inputManager: InputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputManager.hideSoftInputFromWindow(mEtSearch.windowToken, 0)
@@ -77,12 +79,11 @@ fun hideSoftInput() {
 >IME 的意思是输入法编辑器(*Input Method Editor*)，`android:imeAction` 可以设置的 action 及其含义可以参考[官方文档](https://developer.android.google.cn/reference/android/view/inputmethod/EditorInfo.html)。
 
 然后，给 EditText 设置动作监听。
-```kotlin
+```java
 mEditText.setOnEditorActionListener { view, actionId, event ->
     //判断 actionId
     if (actionId == EditorInfo.IME_ACTION_SEND) {
-        //do something
-        
+        //do something...       
         return@setOnEditorActionListener true
     }
     return@setOnEditorActionListener false
@@ -160,7 +161,8 @@ android:windowSoftInputMode="stateVisible|adjustResize"
 
 监听键盘弹出或收起的方法有很多种，可以参考[这个问题](https://stackoverflow.com/questions/4312319/how-to-capture-the-virtual-keyboard-show-hide-event-in-android)下的答案，这里只介绍一种：
 
-```kotlin
+```java
+//kotlin code
 class MainActivity : AppCompatActivity() {
     private lateinit var mEditText: EditText
     //1. 声明 OnGlabalLayoutListener 
@@ -206,8 +208,8 @@ class MainActivity : AppCompatActivity() {
 `isSoftInputShown()` 方法通过判断根布局的显示高度和总高度之差是否大于一个值来判断软键盘是否弹出，并且考虑了屏幕像素密度。  
 这种方法在`android:windowSoftInputMode`为`adjustPan`和`adjustResize`时都能奏效。   
 
-*需要注意的是一定要在 `onDestroy()` 回调中移除监听器，否则可能会引发内存泄漏。*
+需要注意的是一定要在 `onDestroy()` 回调中移除监听器，否则可能会引发内存泄漏。
 
    
 ## To be Continued
-以上就是我目前遇到过的 Android 软键盘操作的总结，以后遇到其他情况，再做更新。：）
+以上就是我目前遇到过的 Android 软键盘操作的总结，以后遇到其他情况，再做更新。：)
