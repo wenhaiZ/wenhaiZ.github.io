@@ -12,18 +12,18 @@ layout: default
                     {% if page.subtitle %}
                     <h2 class="subheading">{{ page.subtitle }}</h2>
                     {% endif %}
-                    <span class="meta" style='margin-top:0.5em;font-style:normal' >{% if post.author %}{{ post.author }}{% else %}{{ site.default_author }}{% endif %} 发表于 {{ page.date | date: "%Y 年 %m 月 %d 日 %H 时 %M 分" }}
+                    <span class="meta" style='margin-top:0.5em;' >{% if post.author %}{{ post.author }}{% endif %} Posted on {{ page.date | date: "%H : %M , %b  %d , %Y" }}
                     </span>
-                    <span class="meta" style='margin-top:0.5em;font-style:normal'>文章分类：
+                    <span class="meta" style='margin-top:0.5em;'>Tag :
                          {% for tag in page.tags %}
                             {% if tag != "Code" %}
                                 <a href="/tags/{{ tag }}"><i class="fa fa-tag"></i> {{ tag }}</a> 
                             {% endif %}
                         {% endfor %} </span>
-                    <span class="meta" style='margin-top:0.5em;font-style:normal'>
+                    <span class="meta" style='margin-top:0.5em;'>
                         {% assign minutes = content | number_of_words | divided_by: site.wpm %}
                         <i class="fa fa-clock-o"></i>&nbsp;{% if minutes == 0 %}{% assign minutes = 1 %}{% endif %}
-                        阅读本文大概需要&nbsp;{{ minutes }}&nbsp;分钟
+                        {{ minutes }} minutes to read.
                     </span>
                 </div>
             </div>
