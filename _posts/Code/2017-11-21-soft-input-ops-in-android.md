@@ -3,7 +3,7 @@ layout: post
 title: "Android 键盘操作汇总"
 date: 2017-11-21 19:39:00 +0800
 tags: [Code,Android]
-subtitle: "To be Continued"
+subtitle: "未完待续"
 ---
 这篇博客是对 Android 开发过程中软键盘操作的总结，主要包括键盘的主动弹出、收起以及一些监听操作。   
 

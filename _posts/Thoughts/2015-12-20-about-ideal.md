@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "无理想"
+title: "关于「理想」"
 date: 2015-12-20 23:25:00 +0800
-tags: [Life]
+tags: [Thoughts]
 subtitle: ""
 ---
 因为「理想」这个词，我曾陷入到一段痛苦又拧巴的日子里。

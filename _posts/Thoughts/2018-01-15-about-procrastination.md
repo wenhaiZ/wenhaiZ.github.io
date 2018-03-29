@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "对拖延的一些看法"
+title: "关于「拖延」"
 date: 2018-01-15 15:16:00 +0800
-tags: [Life]
+tags: [Thoughts]
 subtitle: "Later maybe not equals never."
 ---
 > 文章所有图片均来自演讲视频截图 

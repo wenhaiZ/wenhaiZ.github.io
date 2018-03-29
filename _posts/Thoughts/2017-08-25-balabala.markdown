@@ -2,7 +2,7 @@
 layout: post
 title: "唠叨一篇"
 date: 2017-08-25 23:01:00 +0800
-tags: [Life]
+tags: [Thoughts]
 comments: true
 subtitle: ""
 published: true
