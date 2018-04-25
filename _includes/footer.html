@@ -1,6 +1,7 @@
 <!-- Footer -->
 <footer>
     <div class="container">
+        
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <ul class="list-inline text-center">
@@ -96,12 +97,33 @@
                     </li>
                     {% endif %}
                 </ul>
+                <div class="summary">
+                        {% assign count = 0 %}
+                        {% assign postCount = 0 %}
+                        {% for post in site.posts %}
+                            {% assign single_count = post.content | strip_html | strip_newlines | remove: " " | size %}
+                            {% assign count = count | plus: single_count %}
+                            {% assign postCount = postCount | plus: 1 %}
+                        {% endfor %}
+                        
+                        
+                    <p class="summary_str">Summary : {{postCount}} posts.
+                        <!-- 字数统计不准确。 -->
+                        <!-- about {% if count > 1000 %}
+                            {{ count | divided_by: 1000 }} k 
+                        {% else %}
+                            {{ count }}
+                        {% endif %} words. -->
+                    </p>
+                </div>
                 <p class="copyright text-muted">
                 {% if site.copyright_name %}
                      Copyright &copy; {{ site.copyright_name }} {{ site.time | date: '%Y' }}</p>
                 {% endif %}
             </div>
         </div>
+
+        
     </div>
 </footer>
 
