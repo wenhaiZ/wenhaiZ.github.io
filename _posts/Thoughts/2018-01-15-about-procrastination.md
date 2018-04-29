@@ -11,11 +11,13 @@ subtitle: "Later maybe not equals never."
 
 [第一个演讲](http://open.163.com/movie/2016/3/Q/E/MBHQSM52F_MBI15O7QE.html)主讲人是 Tim Urban，他结合自己写论文的经历，用形象有趣的模型幽默的解释了拖延者的思维系统和行为过程。   
 
-拖延者的思维系统里有三个角色：一个是理性决策者（Rational Decision Maker），他理性的制定计划，决定目前应该做什么；一只及时行乐的猴子（Instant Gratifition Monkey），它只关注那些简单而有趣的事；    
-![](/assets/img/post/monkey_maker.png)  
+拖延者的思维系统里有三个角色：一个是理性决策者（Rational Decision Maker），他理性的制定计划，决定目前应该做什么；一只及时行乐的猴子（Instant Gratifition Monkey），它只关注那些简单而有趣的事； 
+
+![monkey_maker](/assets/img/post/monkey_maker.png)  
 
 还有一只惊慌怪兽（Panic Monster），它平时处于休眠状态，当 Deadline 逼近时就会觉醒，可以吓跑那只贪图行乐的猴子。  
-![](/assets/img/post/panic_monster.png)
+
+![panic_monster](/assets/img/post/panic_monster.png)
 
 拖延者的行为过程就可以用上面的系统来解释：任务开始时，理性决策者会控制大脑，他可能会制定一些可行的计划；但是，之后那只猴子就出现了，拖延者开始把时间浪费在简单且有趣的事上，比如看视频、刷微博、看剧等事情上；直到 Deadline 临近，惊慌怪兽觉醒，吓跑了猴子，理性决策者重新掌舵，拖延者得以按时完成任务。
 
@@ -35,7 +37,7 @@ Adam 讲到一次自己的投资经历，他的一个学生叫他投资他们的
 Adam 自认为是个提前症患者，也就是他脑中的惊慌怪兽在接收任务时就是醒着的，所以他总是能提前很长时间完成任务，这看上去并没什么不好。直到他的一个学生说自己在拖延的时候更有创造性，他才开始关注拖延与创造性之间的关系。    
 
 他通过一些实验发现，适度拖延的人创造力比提前症和重度拖延的人高出16%，并且给了一条曲线：  
-![](/assets/img/post/creativity.png)
+![creativity](/assets/img/post/creativity.png)
 也就是说，原创者或者创造力比较强的人往往都存在一定程度的拖延。  
 
 对于原因，Adam 是这样解释的：**当你迅速开始任务，然后开始拖延时，这个任务仍然在你脑海里处于活动状态，这种发散思维能让你获得更多灵感。**
