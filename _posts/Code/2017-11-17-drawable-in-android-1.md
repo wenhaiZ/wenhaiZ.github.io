@@ -4,6 +4,7 @@ title: "Android 中的 Drawable （一）"
 date: 2017-11-17 01:00:00 +0800
 tags: [Code,Android]
 subtitle: "一些可以直接用于显示的 Drawable"
+code-link: "assets/code/171117.md"
 ---
 >我想用两篇文章结合我看的书籍和官方文档总结 Android 中 `Drawable` 的用法，以便查阅，这是第一篇。  
 
@@ -21,20 +22,8 @@ Drawable 有内部宽/高的概念，可通过 `getInstrinsicWidth/getInstrinsic
 ## [BitmapDrawable](https://developer.android.google.cn/guide/topics/resources/drawable-resource.html#Bitmap) 
 `BitmapDrawable` 代表一张图片资源，一般可以通过 `R.drawable.file_name`直接使用，但是通过 `<bitmap>` 标签可以定义更多细节。    
 其 XML 定义形式如下：
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<bitmap
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@[package:]drawable/drawable_resource"
-    android:antialias= [ "true" | "false"]
-    android:dither=["true" | "false"]
-    android:filter=["true" | "false"]
-    android:gravity=["top" | "bottom" | "left" | "right" | "center_vertical" |
-                      "fill_vertical" | "center_horizontal" | "fill_horizontal" |
-                      "center" | "fill" | "clip_vertical" | "clip_horizontal"]
-    android:mipMap=["true" | "false"]
-    android:tileMode=["disabled" | "clamp" | "repeat" | "mirror"] />
-```
+![code01](/assets/img/post/code/171117_01.png)
+
 其中的几个属性含义如下：
 - **android:src**：**图片资源的 id**
 - **android:antialias**:**是否开启抗锯齿**，一般设为 `true`。开启抗锯齿会使图像显示的更平滑，但会略微降低图像的质量。
@@ -73,68 +62,21 @@ Drawable 有内部宽/高的概念，可通过 `getInstrinsicWidth/getInstrinsic
 
 ## [NinePatchDrawable](https://developer.android.google.cn/guide/topics/resources/drawable-resource.html#NinePatch)
 `NinePatchDrawable` 对应 `<nine-patch>`标签，代表一张 `.9` 格式的图片。
-例如：
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<nine-patch xmlns:android="http://schemas.android.com/apk/res/android"
-    android:src="@drawable/android"
-    android:dither="true"
-    android:antialias="true">
-</nine-patch>
-```
+例如： 
+![code02](/assets/img/post/code/171117_02.png)
+
 在 `.9` 图片里我们可以自定义需要拉伸的部分以及显示内容的区域，详情可以参考[这里](https://developer.android.google.cn/guide/topics/graphics/2d-graphics.html#nine-patch)。   
 BitmapDrawable 的属性同样适用于 NinePatchDrawable。
 ## [ColorDrawable](https://developer.android.google.cn/guide/topics/resources/more-resources.html#Color)
 `ColorDrawable` 代表颜色资源，它在 `res/values/colors.xml` 中定义：
-```xml
-<resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-</resources>
-```
+![code03](/assets/img/post/code/171117_03.png)
+
 ColorDrawable 可通过 `R.drawable.color_name` 引用用。  
 
 ## [ShapeDrawable](https://developer.android.google.cn/guide/topics/resources/drawable-resource.html#Shape)
-`ShapeDrawable` 代表用纯色或渐变色填充的简单图形，例如矩形、圆形等，它通过`<shape>` 标签来定义，语法稍显复杂：
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<shape
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape=["rectangle" | "oval" | "line" | "ring"] >
-    <corners
-        android:radius="integer"
-        android:topLeftRadius="integer"
-        android:topRightRadius="integer"
-        android:bottomLeftRadius="integer"
-        android:bottomRightRadius="integer" />
-    <gradient
-        android:angle="integer"
-        android:centerX="float"
-        android:centerY="float"
-        android:centerColor="integer"
-        android:endColor="color"
-        android:gradientRadius="integer"
-        android:startColor="color"
-        android:type= ["linear" | "radial" | "sweep"]
-        android:useLevel=["true" | "false"] />
-    <padding
-        android:left="integer"
-        android:top="integer"
-        android:right="integer"
-        android:bottom="integer" />
-    <size
-        android:width="integer"
-        android:height="integer" />
-    <solid
-        android:color="color" />
-    <stroke
-        android:width="integer"
-        android:color="color"
-        android:dashWidth="integer"
-        android:dashGap="integer" />
-</shape>
-```
+`ShapeDrawable` 代表用纯色或渐变色填充的简单图形，例如矩形、圆形等，它通过`<shape>` 标签来定义，语法稍显复杂： 
+![code04](/assets/img/post/code/171117_04.png)
+
 `shape` 属性表示形状，包括矩形（`rectangle`）、椭圆(`oval`)、线（`line`）和圆环（`ring` ）。   
 针对 ring 形状还有几个特殊属性：    
 
@@ -157,59 +99,19 @@ ColorDrawable 可通过 `R.drawable.color_name` 引用用。
 
 ## [LayerDrawable](https://developer.android.google.cn/guide/topics/resources/drawable-resource.html#LayerList)
 `LayerDrawable` 表示一组带有层次结构的 Drawable 集合，对应标签为`<laryer-list>`，定义语法如下：  
-```xml
-<layer-list
-    xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item
-        android:drawable="@[package:]drawable/drawable_resource"
-        android:id="@[+][package:]id/resource_name"
-        android:top="dimension"
-        android:right="dimension"
-        android:bottom="dimension"
-        android:left="dimension" />
-</layer-list>
-```
+![code05](/assets/img/post/code/171117_05.png)
+
 每个 `<item>` 对应一个 Drawable，也就是 LayerDrawable 中的每一层，下面的 item 会覆盖上面的 item 。`top`,`right`等属性表示每层 Drawable 相对于 View 的左上角的偏移量。
-例如：
-```xml
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:drawable="@drawable/shape1"
-        android:left="10dp"
-        android:top="10dp"/>
-    <item
-        android:drawable="@drawable/shape2"
-        android:left="20dp"
-        android:top="20dp"/>
-    <item
-        android:drawable="@drawable/shape3"
-        android:left="40dp"
-        android:top="40dp"/>
-</layer-list>
-```
+例如：  
+![code06](/assets/img/post/code/171117_06.png)
+
 显示效果如下：   
 ![layer-preview](/assets/img/post/layer_preview.png)
 
 ## [StateListDrawable](https://developer.android.google.cn/guide/topics/resources/drawable-resource.html#StateList)
-`StateListDrawable` 是比较常用的一种 Drawable，用于给控件设定在不同状态（比如 Button 的按下和非按下）时所显示的 Drawable，对应标签为`<selector>`，定义语法如下：
-```xml
-<selector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:constantSize=["true" | "false"]
-    android:dither=["true" | "false"]
-    android:variablePadding=["true" | "false"] >
-    <item
-        android:drawable="@[package:]drawable/drawable_resource"
-        android:state_pressed=["true" | "false"]
-        android:state_focused=["true" | "false"]
-        android:state_hovered=["true" | "false"]
-        android:state_selected=["true" | "false"]
-        android:state_checkable=["true" | "false"]
-        android:state_checked=["true" | "false"]
-        android:state_enabled=["true" | "false"]
-        android:state_activated=["true" | "false"]
-        android:state_window_focused=["true" | "false"] />
-</selector>
-```
+`StateListDrawable` 是比较常用的一种 Drawable，用于给控件设定在不同状态（比如 Button 的按下和非按下）时所显示的 Drawable，对应标签为`<selector>`，定义语法如下： 
+![code07](/assets/img/post/code/171117_07.png)
+
 每个 item 都表示一个 Drawable，通过 `state_xxx` 来设定对应状态：       
 
 |状态|说明|
@@ -231,17 +133,9 @@ StateListDrawable 可设置的属性说明如下：
 
 
 ## [InsetDrawable](https://developer.android.google.cn/guide/topics/resources/drawable-resource.html#Inset)
-`InsetDrawable` 可以以一定距离插入其他 Drawable，对应标签`<inset>`,常用于 View 的背景比实际区域小的情况，声明语法：
-```xml
-<inset xmlns:android="http://schemas.android.com/apk/res/android"
-    android:drawable="@drawable/background"
-    android:insetTop="10dp"
-    android:insetBottom="10dp"
-    android:insetLeft="10dp"
-    android:insetRight="10dp">
-    <!-- other drawables.... -->
-</inset>
-```
+`InsetDrawable` 可以以一定距离插入其他 Drawable，对应标签`<inset>`,常用于 View 的背景比实际区域小的情况，声明语法： 
+![code08](/assets/img/post/code/171117_08.png)
+
 其中 `insetXxx`属性表示各边内边距。
 
 ## Refs

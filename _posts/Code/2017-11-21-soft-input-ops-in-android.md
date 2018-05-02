@@ -4,22 +4,14 @@ title: "Android 键盘操作汇总"
 date: 2017-11-21 19:39:00 +0800
 tags: [Code,Android]
 subtitle: "未完待续"
+code-link: "assets/code/171121.md"
 ---
 这篇博客是对 Android 开发过程中软键盘操作的总结，主要包括键盘的主动弹出、收起以及一些监听操作。   
 
 ## 弹出软键盘
 Andorid 中的 `EditText` 在获取焦点时会主动弹出软键盘以供用户输入，我们也可以根据需要主动弹出软键盘，软键盘的弹出只需要三行代码就可以搞定：
-```java
-//kotlin code
-fun showSoftInput() {
-    //1.接收输入的 EditText 获取焦点（如果当前 EditText 已经获取焦点，可以省略）
-    mEtSearch.requestFocus()
-    //2. 获取 InputMethodManager
-    val inputManager: InputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    //3. 通过 showSoftInput 弹出软键盘
-    inputManager.showSoftInput(mEtSearch, InputMethodManager.SHOW_FORCED)
-}
-```  
+![code01](/assets/img/post/code/171121_01.png)
+
 >Android 中用于处理应用和输入法之间交互的框架称为 IMF (*Input Method Framwork*)，而 [InputMethodManager](https://developer.android.google.cn/reference/android/view/inputmethod/InputMethodManager.html)是 IMF 框架的核心系统级 API。 
 
 `showSoftInput(View view, int flags)` 的参数含义如下：
@@ -27,14 +19,9 @@ fun showSoftInput() {
 - **flag**：附加的操作信息。当取值为 `SHOW_IMPLICIT`时，表明弹出键盘**不是由用户直接发起**的请求，而是隐式的，此时键盘**可能不会弹出**；当取值为`SHOW_FORCED`时，表明弹出键盘请求**由用户直接发起**，在用户请求收起键盘前，软键盘会一直显示。    
 
 ## 收起软键盘
-收起键盘的操作同样需要用到 InputMethodManager，只是调用的方法不同：
-```java
-//kotlin code
-fun hideSoftInput() {
-    val inputManager: InputMethodManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    inputManager.hideSoftInputFromWindow(mEtSearch.windowToken, 0)
-}
-```
+收起键盘的操作同样需要用到 InputMethodManager，只是调用的方法不同： 
+![code02](/assets/img/post/code/171121_02.png)
+
 `hideSoftInputFromWindow(IBinder windowToken, int flags)` 的官方解释为请求从当前正在接收输入的窗口上下文中隐藏软键盘 (*request to hide the soft input window from the context of the window that is currently accepting input*)，它接收的参数含义如下：
 - **windowToken**：发起请求的窗口的象征 (*token*)，可通过 `View.getWindowToken()`方法获得
 - **flag**：附加的操作信息。当取值为`HIDE_IMPLICIT_ONLY`时，表明软键盘**只会在用户没有明确弹出键盘**的情况下（也就是通过 `SHOW_IMPLICIT` 显示键盘时）隐藏；当取值为 `HIDE_NOT_ALWAYS` 时，表明如果键盘**不是**通过`SHOW_FORCED`显示的，那么就会隐藏。  
@@ -66,62 +53,28 @@ fun hideSoftInput() {
 以「发送」为例。   
 
 首先，在 `layout` 文件中，对相应的 `EditText` 进行配置：
-```xml
-<EditText
-        android:id="@+id/input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:imeOptions="actionSend"
-        android:inputType="text"/>
-```
+
+![code03](/assets/img/post/code/171121_03.png)
+
 需要设置`android:imeOptions` 和 `android:inputType`两个属性，通过前者来指定发送、搜索、下一步等动作，后者指定输入的文本类型。**如果不设置`android:inputType`，就达不到预期效果。**    
 
 >IME 的意思是输入法编辑器(*Input Method Editor*)，`android:imeAction` 可以设置的 action 及其含义可以参考[官方文档](https://developer.android.google.cn/reference/android/view/inputmethod/EditorInfo.html)。
 
 然后，给 EditText 设置动作监听。
-```java
-mEditText.setOnEditorActionListener { view, actionId, event ->
-    //判断 actionId
-    if (actionId == EditorInfo.IME_ACTION_SEND) {
-        //do something...       
-        return@setOnEditorActionListener true
-    }
-    return@setOnEditorActionListener false
-}
-```
+![code04](/assets/img/post/code/171121_04.png)
+
 这样配置后，软键盘上的回车就会变成「发送」，用户点击后就会执行相应的代码。     
 
-之所以要设置 `android:inputType` 是因为在 `TextView` 的 `onEditorAction()` 中有如下代码：
-```java
-public void onEditorAction(int actionCode) {
-        final Editor.InputContentType ict = mEditor == null ? null : mEditor.mInputContentType;
-        //判断 InputContentType 是否为空
-        if (ict != null) {
-            if (ict.onEditorActionListener != null) {
-                if (ict.onEditorActionListener.onEditorAction(this,actionCode, null)) {
-                    return;
-                }
-            }
+之所以要设置 `android:inputType` 是因为在 `TextView` 的 `onEditorAction()` 中有如下代码：  
+![code05](/assets/img/post/code/171121_05.png)
 
-            //...handle default action
-        }
-}
-```
 可以看到，如果不设置`android:inputType`，那么代码中的 `ict` 为 `null`，即使设置了监听器也不会起作用。   
 
 
 ## 键盘弹出后的界面调整
-有时候软键盘的弹出会遮挡输入区域，此时就需要在 `AndoridManifest.xml`对 `<activity>` 的`android:windowSoftInputMode`属性进行配置：
-```xml
-<!-- 配置 android:windowSoftInputMode 属性-->
-<activity android:name=".MainActivity"
-    android:windowSoftInputMode="adjustNothing">
-    <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
-        <category android:name="android.intent.category.LAUNCHER"/>
-    </intent-filter>
-</activity>
-```   
+有时候软键盘的弹出会遮挡输入区域，此时就需要在 `AndoridManifest.xml`对 `<activity>` 的`android:windowSoftInputMode`属性进行配置： 
+![code06](/assets/img/post/code/171121_06.png)
+
 按照[官方文档](https://developer.android.google.cn/guide/topics/manifest/activity-element.html#wsoft)的说法，`android:windowSoftInputMode`属性主要影响 Activity 的两个方面：
 - 当 Activity 成为用户焦点时软键盘的状态（显示或隐藏）
 - 是否调整 Activity 窗口或者平移内容来为软键盘腾出空间    
@@ -142,9 +95,8 @@ public void onEditorAction(int actionCode) {
 |adjustPan|不调整 Activity 主窗口的尺寸来为软键盘腾出空间， 而是自动平移窗口的内容，使当前焦点永远不被键盘遮盖，让用户始终都能看到其输入的内容。 *这通常不如尺寸调正可取，因为用户可能需要关闭软键盘以到达被遮盖的窗口部分或与这些部分进行交互。*|  
 
 其中 `state_xxx` 决定当 Activity 成为用户焦点时软键盘的状态，`adjust_xxx` 决定软键盘弹出时窗口的配置。`android:windowSoftInputMode`属性值可以设为上表中的一个或者是`state_xxx`和`adjust_xx`的组合，例如：
-```xml
-android:windowSoftInputMode="stateVisible|adjustResize"
-```   
+![code07](/assets/img/post/code/171121_07.png)
+
 如果发现`adjustResize`没有达到预期效果，可以参考下面文章，但不保证一定会有效果：  
 - [取消主题中全屏设置](https://stackoverflow.com/questions/8398102/androidwindowsoftinputmode-adjustresize-doesnt-make-any-difference)
 - [使用 ScrollView 包裹](https://stackoverflow.com/questions/22370710/androidwindowsoftinputmode-adjustresize-is-not-working-as-it-should-be)
@@ -161,55 +113,12 @@ android:windowSoftInputMode="stateVisible|adjustResize"
 
 监听键盘弹出或收起的方法有很多种，可以参考[这个问题](https://stackoverflow.com/questions/4312319/how-to-capture-the-virtual-keyboard-show-hide-event-in-android)下的答案，这里只介绍一种：
 
-```java
-//kotlin code
-class MainActivity : AppCompatActivity() {
-    private lateinit var mEditText: EditText
-    //1. 声明 OnGlabalLayoutListener 
-    private lateinit var mGlobalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        mEditText = findViewById(R.id.input)
-        //2.实例化 OnGlobalLayoutListener
-        mGlobalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
-            if (isSoftInputShown(mEditText.rootView)) {//软键盘弹出
-                Toast.makeText(this@MainActivity, "SoftInput Shown", Toast.LENGTH_SHORT).show()
-            } else {//软键盘收起
-                Toast.makeText(this@MainActivity, "SoftInput Hidden", Toast.LENGTH_SHORT).show()
-            }
-        }
-        //3.添加监听
-        mEditText.viewTreeObserver.addOnGlobalLayoutListener(mGlobalLayoutListener)
-    }
-
-
-    /**
-    监听键盘是否弹出的方法
-    */
-    private fun isSoftInputShown(rootView: View): Boolean {
-        val softKeyboardHeight = 100 //这个值可以略微调整
-        val r = Rect()
-        rootView.getWindowVisibleDisplayFrame(r)
-        val dm = rootView.resources.displayMetrics
-        val heightDiff = rootView.bottom - r.bottom
-        return heightDiff > softKeyboardHeight * dm.density
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        //4.移除监听器
-        mEditText.viewTreeObserver.removeOnGlobalLayoutListener(mGlobalLayoutListener)
-    }
-}
-```  
+![code08](/assets/img/post/code/171121_08.png) 
 
 `isSoftInputShown()` 方法通过判断根布局的显示高度和总高度之差是否大于一个值来判断软键盘是否弹出，并且考虑了屏幕像素密度。  
 这种方法在`android:windowSoftInputMode`为`adjustPan`和`adjustResize`时都能奏效。   
 
 需要注意的是一定要在 `onDestroy()` 回调中移除监听器，否则可能会引发内存泄漏。
-
    
 ## To be Continued
 以上就是我目前遇到过的 Android 软键盘操作的总结，以后遇到其他情况，再做更新。：)

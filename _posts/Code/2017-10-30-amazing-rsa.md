@@ -3,7 +3,6 @@ layout: post
 title: "神奇的 RSA 算法"
 date: 2017-10-30 16:10:00 +0800
 tags: [Code,CS,Algorithms]
-header-img: ""
 subtitle: "一种实现非对称加密的算法"
 ---
 计算机通信加密有两种方式——对称加密和非对称加密。   
@@ -23,50 +22,59 @@ subtitle: "一种实现非对称加密的算法"
 ## RSA 密钥生成
 为了生成公钥和密钥，需要以下步骤：   
 1. 选择两个不相等的大质数 p 和 q（这两个数越大，RSA 越不容易破解，当然，执行加密和解密的时间就越长，一般选择 1024 bit 的数量级）。
-2. 计算 $n = pq$ 和 $z = (p-1)(q-1)$
+2. 计算 n = pq 和 z = (p-1)(q-1)
 3. 选择一个数 e（e < z），且使 e 与 z 互质（即 e 和 z 没有除 1 之外的公因数）
-4. 找一个数 d，使 ed - 1 可以被 z 整除，即：$ed \mod n = 1$
+4. 找一个数 d，使 ed - 1 可以被 z 整除，即：ed mod n = 1
 5. 公布二元组（n，e）为公钥，保留二元组（n，d）为私钥 
 
 ## RSA 加密和解密 
 假设 A 和 B 需要通信，A 有 B 的公钥（n，e），B 有私钥（n，d），A 发给 B 的消息为 m（**m < n**）。   
 
-- 加密：先做指数运算 $m^e$，然后计算 $m^e$ 被 n 整除的余数，因此消息 m 对应的加密结果为：$c = m^e  \mod  n$   
+- 加密：先做指数运算 m^e，然后计算 m^e 被 n 整除的余数，因此消息 m 对应的加密结果为： 
 
-- 解密：对 c 做指数运算 $c^d$，然后计算 $c^d$ 被 n 整除的余数得到结果就是 m，即：$m = c^d \mod n$ 
+![math01](/assets/img/post/math_01.png)
+
+- 解密：对 c 做指数运算 c^d，然后计算 c^d 被 n 整除的余数得到结果就是 m，即：  
+
+![math02](/assets/img/post/math_02.png)
 
 ## RSA 算法原理
 神奇的 RSA 算法背后有严密的数学支撑，这里就简单介绍一下相关知识。   
 
-在加密过程中，将表示消息的整数 m 做 e 次的幂运算，然后做模 n 运算得到密文 c，解密时先把密文 c 做 d 次幂，然后做模 n 运算得到原消息 m，即：    
-$$c = m^e \mod n$$ &nbsp;&nbsp;&nbsp;---（1）    
-$$m = c^d \mod n$$ &nbsp;&nbsp;&nbsp;---（2）  
+在加密过程中，将表示消息的整数 m 做 e 次的幂运算，然后做模 n 运算得到密文 c，解密时先把密文 c 做 d 次幂，然后做模 n 运算得到原消息 m，即：  
+
+![math03](/assets/img/post/math_03.png)
+
 将（1）式代入（2），得：       
-$$m = (m^e \mod n)^d \mod n$$   
 
-根据模运算的运算规则：$$a^b \mod n = (a \mod n)^b \mod n$$
-，得   
+![math04](/assets/img/post/math_04.png)
 
-$$(m^e \mod n)^d \mod n = (m^e)^d \mod n = m^{ed} \mod n$$   
+根据模运算的运算规则：  
+![math05](/assets/img/post/math_05.png) 
 
-这时要用到数论中的一个结论：   
->如果 p 和 q 是素数且 $n = pq$，则 $x^y \mod n = x^{y \mod (p-1)(q-1)} \mod n$. 
+得 :  
+
+![math06](/assets/img/post/math_06.png)
+
+这时要用到数论中的一个结论：如果 p 和 q 是素数且 n = pq，则:    
+![math07](/assets/img/post/math_07.png)
 
 因此有
 
-$$m^{ed} \mod n = m^{ed \mod (p-1)(q-1)} \mod n$$   
+![math08](/assets/img/post/math_08.png)
 
 由于开始选择的 e 和 d 满足如下关系：  
 
-$$ed \mod (p-1)(q-1) = 1$$   
+![math09](/assets/img/post/math_09.png)
 
 可得  
 
-$$m^{ed} =  m^{ed \mod (p-1)(q-1)} \mod n = m^1 \mod n = m \mod n$$    
+![math10](/assets/img/post/math_10.png)  
 
-又因为  m < n， 所以 $$m \mod n = m$$。
+又因为  m < n， 所以 m mod n = m。
 
-也就是 $(m^e)^d \mod n = m$
+也就是  
+![math11](/assets/img/post/math_11.png)
 
 这就是 RSA 加密和解密的原理，更详细的论证可以参考阮一峰的这[两篇](http://www.ruanyifeng.com/blog/2013/06/rsa_algorithm_part_one.html)[文章](http://www.ruanyifeng.com/blog/2013/07/rsa_algorithm_part_two.html)。
 
