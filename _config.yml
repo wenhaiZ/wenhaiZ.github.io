@@ -28,7 +28,7 @@ rss : false
 # used for portfolio on home page
 # collections:
 #   - portfolio
-
+timezone: +800 
 # used to estimate reading time
 wpm: 100
 
