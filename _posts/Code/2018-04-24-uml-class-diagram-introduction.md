@@ -4,6 +4,7 @@ title: "常用 UML 类图总结"
 date: 2018-04-24 21:26:00 +0800
 tags: [Code,Android,Java,CS]
 subtitle: ""
+code-link: "assets/code/180424.md"
 ---
 >本文介绍了类及其关系在 UML 中的表示。   
 
@@ -46,14 +47,14 @@ UML 中的模型主要分为三种：
 在 UML 类图中使用带三角箭头的实线表示，箭头从子类指向父类。例如，下面 UML 类图表示了泛化关系：   
 ![generalization](/assets/img/post/generalization.png)    
 上面类图对应代码如下：   
-![code01](/assets/img/post/code/180422_01.png)
+![code01](/assets/img/post/code/180424_01.png)
 ### 接口实现（Interface Realization）   
 看名字就知道，这是描述一个类实现了某个接口，比如在 Java中使用 `implements` 来表示接口实现。   
 
 类图中，接口实现用带三角箭头的虚线来表示，如下图：
 ![interface_realization](/assets/img/post/interface_realization.png)   
 对应Java代码如下：
-![code02](/assets/img/post/code/180422_02.png)
+![code02](/assets/img/post/code/180424_02.png)
 ### 依赖(Dependency)
 依赖关系是一种使用关系，即一个对象使用另一个对象。大多数情况下，依赖关系在代码中体现为某个类的方法使用另一个类的对象作为参数。    
 
@@ -62,7 +63,7 @@ UML 中的模型主要分为三种：
 ![dependency](/assets/img/post/dependency.png) 
  
 对应 Java 代码为：
-![code03](/assets/img/post/code/180422_03.png)
+![code03](/assets/img/post/code/180424_03.png)
 ### 关联(Association)
 关联(Association)关系是类与类之间最常用的一种关系，它是一种结构化关系，用于表示一类对象与另一类对象之间有联系，这种关系比依赖关系要强。关联关系在代码中一般表现为一个类做为另一个类的成员变量。   
 
@@ -74,7 +75,7 @@ UML 中的模型主要分为三种：
 ![association](/assets/img/post/association.png) 
 
 对应代码为：   
-![code04](/assets/img/post/code/180422_04.png)
+![code04](/assets/img/post/code/180424_04.png)
 
 
 >在表示关联关系时可以在关联线上标注角色名，一般用一个表示两者关系的动词或者名词表示（有时该名词为实例对象名），关系的两端代表两种不同的角色，角色名不是必须的，其目的是使类之间的关系更加明确。  
@@ -86,12 +87,12 @@ UML 中的模型主要分为三种：
 ![directed_association](/assets/img/post/directed_association.png)
 
 对应代码：
-![code05](/assets/img/post/code/180422_05.png)
+![code05](/assets/img/post/code/180424_05.png)
 #### 自关联 
 自关联表示一个类拥有一个与该类类型相同的成员变量，例如一个 Node 类型的结点包含一个 Node 类型的next 变量表示下一个结点。 
  ![self_association](/assets/img/post/self_association.png)  
  对应代码：
-![code06](/assets/img/post/code/180422_06.png)
+![code06](/assets/img/post/code/180424_06.png)
 #### 多重性关联 
 多重性关联表示两个关联对象在数量上的对应关系。   
 在UML中，对象之间的多重性可以直接在关联直线上用一个数字或一个数字范围表示，常见的多重性表示方式如下表所示：   
@@ -109,7 +110,7 @@ UML 中的模型主要分为三种：
  ![multi_association](/assets/img/post/multi_association.png) 
 
 对应代码：
-![code07](/assets/img/post/code/180422_07.png)
+![code07](/assets/img/post/code/180424_07.png)
 
 ### 聚合（Aggregation）
 聚合表示整体与部分的关系，在聚合关系中，成员对象是整体对象的一部分，**但是成员对象可以脱离整体对象独立存在**，例如公司与其地址。  
@@ -120,7 +121,7 @@ UML 中的模型主要分为三种：
 
  ![aggregation](/assets/img/post/aggregation.png) 
 对应代码：
-![code08](/assets/img/post/code/180422_08.png)
+![code08](/assets/img/post/code/180424_08.png)
 ### 组合(Composition)
 组合关系也表示类之间整体和部分的关系，但它是一种更强的聚合关系。在组合关系中整体对象负责控制成员对象的生命周期，成员对象不能脱离整体对象而存在，比如人有鼻子和嘴，但鼻子和嘴不能独立于人而存在。   
 在代码实现组合关系时，通常在整体类的构造方法中直接实例化成员类。  
@@ -129,7 +130,7 @@ UML 中的模型主要分为三种：
 
 ![composition](/assets/img/post/composition.png)
 上图对应代码：
-![code09](/assets/img/post/code/180422_09.png)
+![code09](/assets/img/post/code/180424_09.png)
 
 
 ### 注释（Comments）
