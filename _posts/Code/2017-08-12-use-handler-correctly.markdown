@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Handler 的正确使用"
+title: "Handler 使用时的注意事项"
 date: 2017-08-12 09:26:00 +0800
 tags: [Code,Android]
 comments: true
