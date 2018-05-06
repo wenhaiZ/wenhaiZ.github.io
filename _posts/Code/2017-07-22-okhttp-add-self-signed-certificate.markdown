@@ -5,6 +5,7 @@ date:   2017-07-22 16:37:39 +0800
 tags: [Android,Code]
 comments: true
 subtitle: ""
+code-link: "assets/code/170722.md"
 ---  
 
 在使用 `OkHttp` 向使用自签名证书的网站（比如:[12306](https://kyfw.12306.cn/otn/login/init)）发送请求时会直接失败，并且抛出一个 `SSLHandShakeException` 异常. 这是由证书认证失败导致的。之前遇到这个问题在网上东找西找了半天，最后才发现原来官方给了用于添加证书的 [Sample](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/okhttp3/recipes/CustomTrust.java)。我结合其他处理方案，把它整理记录下来，同时查阅文档对用到的 API 做一些解释。　　　
@@ -15,81 +16,16 @@ subtitle: ""
 ![getCer](/assets/img/post//get_cer.jpg)    
 ### 开始配置   
 由于是 demo，我就直接在 Activity 中写了一个 `customTrust()` 方法，用于初始化　`OkHttpClient` 。  
-- `customTrust()`
-```java
- private void customTrust() {
-    X509TrustManager trustManager;
-    SSLSocketFactory sslSocketFactory;
-    //读取自签名证书
-    InputStream cerIn = getResources().openRawResource(R.raw.srca);
-    try {
-        //通过trustManagerForCertificates方法为证书生成 TrustManager
-        trustManager = trustManagerForCertificates(cerIn);
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, new TrustManager[]{trustManager}, null);
-        sslSocketFactory = sslContext.getSocketFactory();
-    } catch (GeneralSecurityException e) {
-        throw new RuntimeException(e);
-    }
-    //设置 OkHttpClient
-    mOkHttpClient = new OkHttpClient.Builder()
-                    .sslSocketFactory(sslSocketFactory, trustManager)
-                    .build();
-}
-```
+- `customTrust()` 
+![code01](/assets/img/post/code/170722_01.png)
+
 这个方法中调用了 `trustManagerForCertificates` 和 `newEmpryKeyStore` 两个方法，他们的内容如下：    
-- `trustManagerForCertificates(InputStream is)`    
-```java
-public static X509TrustManager trustManagerForCertificates(InputStream in) 
-    throws GeneralSecurityException {
-    //InputStream 可以包含多个证书
+- `trustManagerForCertificates(InputStream is)`  
+![code02](/assets/img/post/code/170722_02.png)  
 
-    //CertificateFactory 用于生成 Certificate，也就是数字证书
-    CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-    //由输入流生成证书
-    Collection<? extends Certificate> certificates = certificateFactory.generateCertificates(in);
-    if (certificates.isEmpty()) {
-        throw new IllegalArgumentException("expected non-empty set of trusted certificates");
-    }
+- `newEmpryKeyStore()`  
+![code03](/assets/img/post/code/170722_03.png)    
 
-    // 将证书放入 keyStore
-    char[] password = "password".toCharArray(); // "password"可以任意设置
-    KeyStore keyStore = newEmptyKeyStore(password);
-    int index = 0;
-    for (Certificate certificate : certificates) {
-        String certificateAlias = Integer.toString(index++);
-        keyStore.setCertificateEntry(certificateAlias, certificate);
-    }
-
-    // 用　KeyStore 生成 X509 trust manager.
-     KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(
-                KeyManagerFactory.getDefaultAlgorithm());
-    keyManagerFactory.init(keyStore, password);
-    TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
-                TrustManagerFactory.getDefaultAlgorithm());
-        trustManagerFactory.init(keyStore);
-    TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-    if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
-        throw new IllegalStateException("Unexpected default trust managers:" + Arrays.toString(trustManagers));
-    }
-    return (X509TrustManager) trustManagers[0];
-}
-```
-- `newEmpryKeyStore()`    
-```java
-private static KeyStore newEmptyKeyStore(char[] password) throws GeneralSecurityException {
-    try {
-        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        InputStream in = null;
-        // 传入 'null' 会生成一个空的 Keytore
-        //password 用于检查 KeyStore 完整性和 KeyStore 解锁
-        keyStore.load(in, password);
-        return keyStore;
-    } catch (IOException e) {
-        throw new AssertionError(e);
-    }
-}
-```
 在 `customTurst()` 执行完后，自签名证书就被信任了，接下来就可以使用 `mOkHttpClient` 进行网络请求。
 > 注意：这样配置以后，OkHttp 就只会信任添加的证书，系统内嵌的证书都会失效。如果现在对 `https://www.baidu.com` 发起一个 `get` 请求，同样会请求失败并抛出`SSLHandShakeException`， 因为没有添加对应的证书。如果想是系统原来证书有效，可以采取 `Certificate Pinning` 的形式，可以参考 [官方Sample](https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/okhttp3/recipes/CertificatePinning.java)   
 
