@@ -6,7 +6,7 @@ tags: [Code,Android]
 comments: true
 subtitle: "Serializable & Pacelable"
 ---
-序列化是开发过程中比较常用的操作，这篇文章主要介绍一下常用的两种序列化方式以及它们之间的区别。
+>本文介绍了 Android 开发常用的两种序列化方式以及它们之间的区别。
 
 ## 什么是序列化 
 序列化是将一个对象转换成可存储或可传输的状态（字节流）。   
@@ -38,56 +38,7 @@ subtitle: "Serializable & Pacelable"
 下面通过两个简单的例子来展示这两种序列化方式的使用。　　　
 
 - 实现 Serializable
-```java
-class PlayStatus implements Serializable {
-        //可以不指定
-        static long serialVersionUID = 998;
-}
-```
+![code01](/assets/img/post/code/170918_01.png)
 
 - 实现 Parcelable 
-```java
-public class Artist implements Parcelable {
-    private String artistId;
-    private String name;
-    private String desc;
-    private boolean isChinese;
-
-    protected Artist(Parcel in) {
-        artistId = in.readString();
-        name = in.readString();
-        desc = in.readString();
-        //boolean 类型的反序列化
-        isChineses = in.readInt() == 1;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(artistId);
-        dest.writeString(name);
-        dest.writeString(desc);
-        //boolean 类型的序列化
-        dest.writeInt(isChinese ? 1 : 0);
-    }
-
-    @Override
-    public int describeContents() {
-        //默认返回0
-        return 0;
-    }
-
-    public static final Creator<Artist> CREATOR = new Creator<Artist>() {
-        //创建一个实例
-        @Override
-        public Artist createFromParcel(Parcel in) {
-            return new Artist(in);
-        }
-
-        //创建一个数组
-        @Override
-        public Artist[] newArray(int size) {
-            return new Artist[size];
-        }
-    };
-}
-```
+![code02](/assets/img/post/code/170918_02.png)
