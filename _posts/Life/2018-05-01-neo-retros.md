@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "推荐一个乐队"
+title: "推荐一支乐队"
 date: 2018-05-01 13:19:00 +0800
 tags: [Life]
 subtitle: "只需体验两首歌，你就会和我一样爱上这个乐队"
