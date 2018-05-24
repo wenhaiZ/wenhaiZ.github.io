@@ -97,7 +97,7 @@
                     </li>
                     {% endif %}
                 </ul>
-                <div class="summary">
+                <!-- <div class="summary">
                         {% assign count = 0 %}
                         {% assign postCount = 0 %}
                         {% for post in site.posts %}
@@ -108,14 +108,8 @@
                         
                         
                     <p class="summary_str">Summary : {{postCount}} posts.
-                        <!-- 字数统计不准确。 -->
-                        <!-- about {% if count > 1000 %}
-                            {{ count | divided_by: 1000 }} k 
-                        {% else %}
-                            {{ count }}
-                        {% endif %} words. -->
                     </p>
-                </div>
+                </div> -->
                 <p class="copyright text-muted">
                 {% if site.copyright_name %}
                      Copyright &copy; 2017-{{ site.time | date: '%Y' }} {{ site.copyright_name }} </p>
