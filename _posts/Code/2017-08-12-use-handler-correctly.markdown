@@ -6,7 +6,6 @@ tags: [Code,Android]
 comments: true
 subtitle: "我们的目标是，没有 warning"
 published: true
-code-link: "assets/code/170812.md"
 ---
 在 Android 中，`Handler` 主要用来完成线程间的通信工作。由于 Android 只允许 UI 线程更新 UI，因此通过非 UI 线程更新 UI 的工作就可以通过 `Handler` 来完成，步骤如下：
 1. 在 UI 线程创建 `Handler` 对象，并重写 `handleMessage()` 方法
@@ -45,17 +44,82 @@ UI 线程收到 `Message` 后，会执行 `handleMessage()` 中的操作，`Hand
 Android 中每个 Looper 线程（创建线程时调用了 `Looper.prepare()` 和 `Looper.loop()`，UI 线程就是这样的线程）都有一个 `MessageQueue` 用于保存 `Message` 对象，`Looper` 通过 `loop()` 方法来获取 `Message` 并对其进行分发。   
 
 看一下 `Looper.loop()` 的核心代码：
-![code01](/assets/img/post/code/170812_01.png)
+```java
+public static void loop() {
+    final MessageQueue queue = me.mQueue;
+    for (;;) {
+        //获取 Message
+        Message msg = queue.next(); // might block
+        if (msg == null) {
+            // No message indicates that the message queue is quitting.
+            return;
+        }
+        //.....
+        try {
+            //分发 Message
+            msg.target.dispatchMessage(msg);
+        } finally {
+            if (traceTag != 0) {
+                Trace.traceEnd(traceTag);
+            }
+        }
+        //....
+        msg.recycleUnchecked();
+    }
+}
+```
 
 `loop()` 方法先通过 `queue.next()` 获取一个 `Message` 对象，然后通过 `msg.target.dispatchMessage(msg)` 进行消息分发，而 `msg.target` 就是发送这个消息的 Handler。  
 
 这一点可以通过 `Handler` 的 `enqueueMessage()` 方法看出，所有 `sendMessageXXX()` 的方法最终将会调用这个方法。 
-![code02](/assets/img/post/code/170812_02.png)
+```java
+private boolean enqueueMessage(MessageQueue queue, Message msg, long uptimeMillis) {
+    //为 msg.tatget 赋值
+    msg.target = this;
+    if (mAsynchronous) {
+        msg.setAsynchronous(true);
+    }
+    return queue.enqueueMessage(msg, uptimeMillis);
+}
+``` 
 
 另外需要注意的是，在调用 `queue.next()` 方法时可能会阻塞，因为 `MessageQueue` 的 `next()` 方法中对于分发时间在当前时间之后的 `Massage` 会进行等待。
 
 再来看 `MessageQueue` 的 `next()` 方法核心代码： 
-![code03](/assets/img/post/code/170812_03.png)
+```java
+Message next() {
+    int nextPollTimeoutMillis = 0;
+    for (;;) {
+        synchronized (this) {
+            //获取当前时间
+            final long now = SystemClock.uptimeMillis();
+            Message prevMsg = null;
+            //获得下一个 message
+            Message msg = mMessages;
+            if (msg != null) {
+                //当前时间小于 msg 的分发时间
+                if (now < msg.when) {
+                    //设置 nextPollTimeOutMillis
+                    nextPollTimeoutMillis = (int) Math.min(msg.when - now, Integer.MAX_VALUE);
+                } else {
+                    // 当前时间到了 msg 的分发时间，循环结束，方法返回
+                    mBlocked = false;
+                    if (prevMsg != null) {
+                        prevMsg.next = msg.next;
+                    } else {
+                        mMessages = msg.next;
+                    }
+                    msg.next = null;
+                    msg.markInUse();
+                    return msg;
+                }
+            } else {
+                // No more messages.
+                nextPollTimeoutMillis = -1;
+            }
+    }
+}
+``` 
 
 可以看到对于分发时间晚于当前时间的 `msg`, `next()` 会一直循环，直到当前时间到达 `msg` 的分发时间，才会 `return msg` 。
 
@@ -66,7 +130,9 @@ Android 中每个 Looper 线程（创建线程时调用了 `Looper.prepare()` �
 ## Handler 引发内存泄漏的原理
 
 先来看一段代码，假如我通过 `Handler` 发送一个这样的消息，然后退出 `Activity`： 
-![code04](/assets/img/post/code/170812_04.png)
+```java
+ handler.sendMessageDelayed(handler.obtainMessage(MSG_UPDATE), 1000 * 60 * 10);
+``` 
 
 这样会有什么问题？
 
@@ -97,10 +163,40 @@ Android 中每个 Looper 线程（创建线程时调用了 `Looper.prepare()` �
 
 处理方式就是采用静态内部类+弱引用，修改后的代码如下：
 - `Handler` 声明 
-![code05](/assets/img/post/code/170812_05.png)
+```java
+//静态内部类
+static class MyHandler extends Handler {   
+    private WeakReference<MainActivity> mainActivityWeakReference;
+
+    //构造方法传入 MainActivity 的弱引用
+    MyHandler(WeakReference<MainActivity> activityWeakReference) {
+        mainActivityWeakReference = activityWeakReference;
+    }
+
+    @Override
+    public void handleMessage(Message msg) {
+        super.handleMessage(msg);
+        //通过弱引用获取 Activity  
+        MainActivity activity = mainActivityWeakReference.get();
+        //进行判空，因为 Activity 可能已经被回收
+        if (activity != null) {
+            //handle message
+            switch (msg.what) {
+                case MSG_UPDATE:
+                    activity.textView.setText("update");
+            }
+        } else {
+                //activity has been gc
+        }
+    }
+}
+```  
 
 - `Handler` 实例化 
-![code06](/assets/img/post/code/170812_06.png)
+```java
+//在 Activity 中创建 Handler
+private Handler handler = new MyHandler(new WeakReference<>(this));
+```   
 
 搞定了，不过要注意一下在 `handleMessage()` 中要对 `Activity` 判空，因为此时 `Activity` 可能已经被回收了。
 

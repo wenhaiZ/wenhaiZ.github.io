@@ -4,7 +4,6 @@ title: "IntentFilter 匹配规则"
 date: 2017-10-14 14:15:00 +0800
 tags: [Code,Android]
 subtitle: "action/category/data"
-code-link: "assets/code/171014.md"
 ---
 在 Android 中可以通过显示和隐式 Intent 来启动 Activity、Service 和BroadcastReceiver。    
 
@@ -17,7 +16,14 @@ IntentFilter 在 `AndroidManifest.xml` 文件中的 Activity/Service/BroadcastRe
 
 
 例如：默认的 MainActivity 包含如下的 IntentFilter ：
-![code01](/assets/img/post/code/171014_01.png)
+```xml
+<activity android:name=".MainActivity">
+    <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+    </intent-filter>
+</activity>
+```  
 
 这篇文章着重介绍 IntentFilter 的匹配规则，即隐式 Intent 的附加信息满足什么条件时才会启动对应的组件。
 
@@ -27,10 +33,24 @@ action 的值是一个字符串，一个 IntentFilter 可以包含多个 action�
 action 匹配规则很简单：只要 Intent 设置的 action 和 IntentFilter 中声明的 action 的其中一个相同，就算匹配成功。
 
 例如在清单文件中声明这样一个 Activity：
-![code02](/assets/img/post/code/171014_02.png)
+```xml
+<activity android:name=".SecondActivity">
+    <intent-filter>
+        <action android:name="com.wenhaiz.ACTION_ONE"/>
+        <action android:name="com.wenhaiz.ACTION_TWO"/>
+        <!-- 必须要有默认的 category -->
+        <category android:name="android.intent.category.DEFAULT"/>
+    </intent-filter>
+</activity>
+```  
 
 它的 IntentFilter 包含两个 action，可以通过下面的代码启动这个 Activity： 
-![code03](/assets/img/post/code/171014_03.png)
+```java
+Intent intent = new Intent();
+intent.setAction("com.wenhaiz.ACTION_ONE");
+// intent.setAction("com.wenhaiz.ACTION_TWO"); //同样可以启动
+startActivity(intent);
+``` 
 
 ## category 匹配规则
 category 的匹配规则与 action 不太相同，可以概括为：   
@@ -39,10 +59,32 @@ category 的匹配规则与 action 不太相同，可以概括为：
 需要注意的是，startActivity 或者 startActivityForResult 方法会为 Intent 加上一个值为 "android.intent.category.DEFAULT" 的 category，因此，在声明 IntentFilter 时，需要加上这个 category。  
 
 例如，在 SecondActivity 的 intent-filter 中声明如下 category：  
-![code04](/assets/img/post/code/171014_04.png)
+```xml
+<activity android:name=".SecondActivity">
+    <intent-filter>
+        <action android:name="com.wenhaiz.ACTION_ONE"/>
+        <action android:name="com.wenhaiz.ACTION_TWO"/>
+
+        <!--必须要有 DEFAULT  -->
+        <category android:name="android.intent.category.DEFAULT"/>
+        <!-- 两个自定义的 category -->
+        <category android:name="com.wenhaiz.CATEGORY_ONE"/>
+        <category android:name="com.wenhaiz.CATEGORY_TWO"/>
+    </intent-filter>
+</activity>
+``` 
 
 那么，启动该 Activity 的代码可以是下面这样： 
-![code05](/assets/img/post/code/171014_05.png)
+```java
+Intent intent = new Intent();
+intent.setAction("com.wenhaiz.ACTION_ONE");
+//可以去掉下面两个中的任何一个，也可以不加 category，那么就会匹配默认的 category
+intent.addCategory("com.wenhaiz.CATEGORY_ONE");
+intent.addCategory("com.wenhaiz.CATEGORY_TWO");
+//加上下面的代码就会启动失败
+//intent.addCategory("com.wenhaiz.CATEGORY_THREE");
+startActivity(intent);
+```  
 
 ## data 匹配规则
 开头简单介绍了 data 的结构，下面解释一下每部分的作用：
@@ -52,17 +94,51 @@ category 的匹配规则与 action 不太相同，可以概括为：
 - path/pathPrefix/pathPattern:路径信息。path 表示完整的路径，pathPatter 也表示完整路径，但是可以包含通配符 "*"，pathPrefix 表示路径前缀信息 
 
 例如 URI http://www.google.com:80/search/info 可以表示成如下形式： 
-![code06](/assets/img/post/code/171014_06.png)
+```xml
+<data
+    android:host="www.google.com"
+    android:path="/search/info"
+    android:port="80"
+    android:scheme="http"/>
+```  
 
 
 data 的匹配规则可以概括为：   
 如果 IntentFilter 中声明了 data 标签，那么隐式 Intent **必须设置** data，并且 IntentFilter 中声明的 data 必须包含在 Intent 设置的 data 中。    
 
 例如 SecondActivity 声明 data 如下：  
-![code07](/assets/img/post/code/171014_07.png)
+```xml
+<activity android:name=".SecondActivity">
+    <intent-filter>
+        <action android:name="com.wenhaiz.ACTION_ONE"/>
+
+        <category android:name="android.intent.category.DEFAULT"/>
+
+        <data
+            android:mimeType="image/*"
+            android:host="www.google.com"
+            android:path="/search/info"
+            android:port="80"
+            android:scheme="http"/>
+
+        <data
+            android:mimeType="video/*"
+            android:port="80"
+            android:scheme="http"/>    
+    </intent-filter>
+</activity>
+``` 
 
 那么启动该 Activity 的代码如下：  
-![code08](/assets/img/post/code/171014_08.png)
+
+```java
+Intent intent = new Intent();
+intent.setAction("com.wenhaiz.ACTION_ONE");
+intent.setDataAndType(Uri.parse("http://www.google.com:80/search/info"),"image/jpeg");
+//下面代码同样可以启动该 Activity
+//intent.setDataAndType(Uri.parse("http://www.google.com:80/search"),"video/mp4");
+startActivity(intent);
+``` 
 
 > 1. 如果 data 中没有指明 URI 的 scheme ,那么默认为 file 或者 content
 > 2. 如果需要为 Intent 指定 URI 和 mimeType，需要使用 setDataAndType，单独使用 setData 或者 setType 都会清楚已设置的 type 或着 uri 信息。 
@@ -71,11 +147,32 @@ data 的匹配规则可以概括为：
 ## 启动前检查隐式 Intent 能否成功匹配
 对于 Activity ，有两种方法可以做到。
 1.  Intent 的 resolveActivity 方法    
-![code09](/assets/img/post/code/171014_09.png)
+```java
+Intent intent = new Intent();
+intent.setAction("com.wenhaiz.ACTION_ONE");
+intent.setDataAndType(Uri.parse("file://www.google.com:80/search"), "video/mp4");
+//传入 packageManager
+ComponentName componentName = intent.resolveActivity(getPackageManager());
+if (componentName == null) {
+    Toast.makeText(MainActivity.this, "没有找到对应的Activity", Toast.LENGTH_SHORT).show();
+} else {
+    startActivity(intent);
+}
+``` 
 
 2. PackageManager 的 queryIntentActivities  
-![code10](/assets/img/post/code/171014_10.png)
-
+```java
+Intent intent = new Intent();
+intent.setAction("com.wenhaiz.ACTION_ONE");
+intent.setDataAndType(Uri.parse("http://www.google.com:80/search"), "video/mp4");
+List<ResolveInfo> resolveInfos = getPackageManager()
+                        .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+if (resolveInfos == null || resolveInfos.size() == 0) {
+    Toast.makeText(MainActivity.this, "没有找到对应的Activity", Toast.LENGTH_SHORT).show();
+} else {
+    startActivity(intent);
+}
+```  
 
 注意，在 queryIntentActivities 方法中传入的第二个参数为 `MATCH_DEFAULT_ONLY` ,也就是只匹配那些声明了值为  `"android.intent.category.DEFALUT"` 的 category 的 Activity，因为不含有这个 category 无法接收隐式 Intent。
 

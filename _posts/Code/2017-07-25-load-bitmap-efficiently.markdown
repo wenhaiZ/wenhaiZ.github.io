@@ -5,7 +5,6 @@ date:   2017-07-25 15:43:39 +0800
 tags: [Code,Android]
 comments: true
 subtitle: ""
-code-link: "assets/code/170725.md"
 ---
 >这篇博客来自我读 《Android 开发艺术探索》 第 12 章《Bitmap 的加载和 Cache》时的笔记，我对内容进行了一些整理和扩展。    
 
@@ -41,7 +40,26 @@ Bitmap 文件(`.bmp`)一般不直接用于网络传输而是使用 `.jpg` 等压
     >`FileDescriptor` 用来表示打开的流、字节或者 `Socket`，一般通过 `FileInputStream` 和 `FileOutputStream` 来创建。  比如：`FileDescriptor fd = fileInputStream.getFD();`   
   
 示例代码：  
-![code01](/assets/img/post/code/170725_01.png) 
+
+```java
+/**
+* 从应用资源中加载 bitmap
+*/
+public void setImgFromResource() {
+    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.she);
+    mImageView.setImageBitmap(bitmap);
+}
+
+/**
+* 从输入流中加载 bitmap
+*/
+public void setImgFromInputStream() {
+    InputStream imgStream = getResources().openRawResource(R.raw.lala_land);
+    Bitmap bitmap = BitmapFactory.decodeStream(imgStream);
+    mImageView.setImageBitmap(bitmap);
+}
+//其他两种省略
+```  
 
 按照上面这样的方式加载 `Bitmap` 会遇到一个问题：当图片太大时，会占用较多的内存，而 Android 系统对每个应用所用内存的大小有限制，如果不经任何处理的加载多张 `Bitmap`，应用就会崩掉，然后会有一条异常信息：   
 `java.lang.OutofMemoryError:bitmap size exceeds VM budget.`   
@@ -68,7 +86,33 @@ Bitmap 文件(`.bmp`)一般不直接用于网络传输而是使用 `.jpg` 等压
     4. 为 `BitmapFacory.Options` 的 `inSampleSize` 赋值，并将 `inJustDecodeBounds` 设为 `false`，开始解析图片     
 
 示例代码：  
-![code02](/assets/img/post/code/170725_02.png) 
+
+```java
+@Override
+public void onWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
+    //1.解析图片尺寸信息
+    BitmapFactory.Options options = new BitmapFactory.Options();
+    options.inJustDecodeBounds = true;
+    BitmapFactory.decodeResource(getResources(), R.mipmap.she, options);
+    //2.获取图片尺寸信息
+    int imgWidth = options.outWidth;
+    int imgHeight = options.outHeight;
+    //3.获取控件大小
+    int imgViewHeight = mImageView.getHeight();
+    int imgViewWidth = mImageView.getWidth();
+    //3.计算 inSampleSize
+    int widthInSampleSize = imgWidth / imgViewWidth;
+    int heightInSampleSize = imgHeight / imgViewHeight;
+    //取二者中较小值
+    int inSampleSize = widthInSampleSize > heightInSampleSize ? heightInSampleSize : widthInSampleSize;
+    //4.设置inSampleSize和inJustDecodeBounds,解析图片
+    options.inSampleSize = inSampleSize;
+    options.inJustDecodeBounds = false;
+    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.she, options);
+    mImageView.setImageBitmap(bitmap);
+}
+``` 
 
 >注意：  
 1. `inSampleSize` 应该选择宽高缩放比例中较小的一个。例如：`ImageView` 尺寸为 `100 * 100`，而图片尺寸为 `200 * 400`，宽的缩放比例为 `2`，高的缩放比例为 `4`。如果 `inSampleSize` 设置为4，那么加载后的图片大小就是 `50 * 100` ,这样图片比 `ImageView` 小，就会被拉伸，导致图片失真；如果 `inSampleSize` 设为 `2`，加载的图片大小为 `100 * 200`，这样就不会被拉伸。  
@@ -87,11 +131,47 @@ Bitmap 文件(`.bmp`)一般不直接用于网络传输而是使用 `.jpg` 等压
 ### [LruCache](https://developer.android.google.cn/reference/android/util/LruCache.html)  
 `LruCache` 是在 `Android 3.1(API level 12)`时添加的 API，用于在 `内存` 中进行数据缓存。内部使用 `LinkedHashMap` 通过 `强引用` 的方式保存 `value`。每当一个 `value` 被访问，它就会被放到队头，当缓存区满时，处于队尾的 `value` 就会被回收。  
 
-- 初始化 
-![code03](/assets/img/post/code/170725_03.png) 
+- 初始化  
 
-- 使用 
-![code04](/assets/img/post/code/170725_04.png) 
+```java
+private void initLruCache() {
+    //获取应用运行内存，单位转成 KB
+    int runMemory = (int) Runtime.getRuntime().maxMemory() / 1024;
+    //设置缓存区大小
+    int cacheSize = runMemory / 8;
+    //初始化 LruCache,指定最大缓存容量
+    mLruCache = new LruCache<Integer, Bitmap>(cacheSize) {
+         //重写计算每个 value 所占空间的方法
+        @Override
+        protected int sizeOf(Integer key, Bitmap value) {
+            return value.getByteCount() / 1024;
+        }
+        //value 被移除时会调用此方法，如果 value 引用了资源，可以在这里释放
+        @Override
+        protected void entryRemoved(boolean evicted, Integer key, Bitmap oldValue, Bitmap newValue) {
+            super.entryRemoved(evicted, key, oldValue, newValue);
+        }
+    };
+}
+```
+
+- 使用  
+
+```java
+public void loadImgFromResource() {
+    int key = 1;
+    //从缓存中取 bitmap
+    Bitmap bitmap = mLruCache.get(key);
+    if (bitmap == null) {
+        //如果不存在，则进行加载
+        bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.she);
+        //将加载好的图片进行缓存
+        mLruCache.put(key, bitmap);
+    }
+    //为 ImageView 设置图片
+    mImageView.setImageBitmap(bitmap);
+}
+``` 
 
 > `LruCache` 还提供了 `remove(Object key)` 来根据`key`手动删除缓存数据。   
 
@@ -104,37 +184,208 @@ Bitmap 文件(`.bmp`)一般不直接用于网络传输而是使用 `.jpg` 等压
 这里通过一个加载图片的小 demo 来演示 `DiskLruCache` 的使用。
 
 - `loadImg()` ：通过一个 `url` 加载图片并设置给 `ImageView`  
-![code05](/assets/img/post/code/170725_05.png) 
 
-- `loadImgFromCache(String url)`: 通过 `DiskLruCache` 从缓存加载 
-![code06](/assets/img/post/code/170725_06.png)
+```java
+public void loadImg(String url) {
+    //先尝试从本地缓存加载
+    Bitmap bitmap = loadImgFromCache(url);
+    if (bitmap != null) {
+        //从缓存加载成功，为 ImageView 设置图片
+        mImageView.setImageBitmap(bitmap);
+    } else {
+        //如果本地缓存中没有缓存该图片，再从网络加载
+        loadImgFromNetwork(url);
+    }
+}
+``` 
+
+- `loadImgFromCache(String url)`: 通过 `DiskLruCache` 从缓存加载  
+
+```java
+private Bitmap loadImgFromCache(String url) {
+    Bitmap bitmap = null;
+    if (mDiskLruCache == null || mDiskLruCache.isClosed()) {
+        //初始化 initDiskLruCache
+        initDiskLruCache();
+    }
+    final String key = keyForUrl(url);
+    try {
+        DiskLruCache.Snapshot snapshot = mDiskLruCache.get(key);
+        if (snapshot != null) {
+             InputStream inputStream = snapshot.getInputStream(0);
+            bitmap = BitmapFactory.decodeStream(inputStream);
+            inputStream.close();
+        } else {
+            //缓存中没有该 key
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    return bitmap;
+}
+``` 
 
 `DiskLruCache` 的 `get` 方法用于通过 `key` 来访问 `value` ,会返回一个`Snapshot` 对象，通过 `snapshot.getInputStream(int index)` 来拿到输入流。
 > `index` 值是 `key` 所对应的 `value` 的索引，从 `0` 开始。如果初始化 `DiskLruCache` 时指定一个 `key` 对应两个 `value` ,那么`index = 1`时拿到的就是第二个 `value` 的输入流。如果缓存中还没有添加过该`key`，那么 `get` 就会返回 `null`。  
 
 - `initDiskLruCache()` : 初始化 `DiskLruCache` 
-![code07](/assets/img/post/code/170725_07.png)
+```java
+private void initDiskLruCache() {
+    // 缓存目录
+    File diskCacheDir = new File(getCacheDir(),"bitmap");
+    if (!diskCacheDir.exists()){
+        diskCacheDir.mkdir();
+    }
+    //缓存容量 10M
+    long cacheSize = 1024*1024*10;
+    try {
+        mDiskLruCache = DiskLruCache.open(diskCacheDir,1,1,cacheSize);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+``` 
 
 `DiskLruCache` 需要通过静态方法 `open()` 来打开，这个方法需要四个参数: 
    - `File directory`：缓存目录，可以是应用自身目录，也可以是公共目录。注意：多个进程不要使用同一个缓存目录。  
    - `int appVersion`：App 版本，版本变化会清空所有缓存，一般设为 `1`
    - `int valueCount`：一个 `key` 对应的 `value` 数量，一般设为 `1`
    - `long maxSize`：最大缓存容量，单位为 `字节`    
-- `loadImgFromNetwork` :通过 `AsyncTask` 从网络中获取图片  
-![code08](/assets/img/post/code/170725_08.png)
+- `loadImgFromNetwork` :通过 `AsyncTask` 从网络中获取图片 
+
+```java
+private void loadImgFromNetwork(final String url) {
+    //创建 AsyncTask 并启动
+    new LoadImgTask(this).execute(url);
+}
+```  
 
 - `LoadImgTask`：异步加载图片并写入缓存 
-![code09](/assets/img/post/code/170725_09_a.png)
-![code09](/assets/img/post/code/170725_09_b.png)
-![code09](/assets/img/post/code/170725_09_c.png)
+```java
+static class LoadImgTask extends AsyncTask<String, Void, Bitmap> {
+    SoftReference<MainActivity> mActivitySoftReference;
+    ProgressDialog mDialog;
+
+    LoadImgTask(MainActivity mainActivity) {
+         mActivitySoftReference = new SoftReference<>(mainActivity);
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        //显示 loading 对话框
+        MainActivity mainActivity = mActivitySoftReference.get();
+        if (mainActivity != null) {
+            mDialog = new ProgressDialog(mainActivity);
+            mDialog.setMessage("loading...");
+            mDialog.show();
+        }
+    }
+
+    @Override
+    protected Bitmap doInBackground(String... strings) {
+        String url = strings[0];
+        MainActivity mainActivity = mActivitySoftReference.get();
+        if (mainActivity == null) {
+            return null;
+        }
+
+        String key = mainActivity.keyForUrl(url);
+        Bitmap bitmap = null;
+        try {
+            URL imgUrl = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) imgUrl.openConnection();
+            InputStream inputStream = connection.getInputStream();
+            // 通过 edit() 获得 Editor
+            DiskLruCache.Editor edit = mainActivity.mDiskLruCache.edit(key);
+            if (edit != null) {
+                //通过 Editor 获得 outputStream
+                OutputStream outputStream = edit.newOutputStream(0);
+                int hasRead;
+                byte[] buffer = new byte[2048];
+                while ((hasRead = inputStream.read(buffer)) > 0) {
+                    //写入缓存
+                    outputStream.write(buffer, 0, hasRead);
+                }
+                outputStream.close();
+                //提交写入
+                edit.commit();
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            //生成 bitmap
+            DiskLruCache.Snapshot snapshot = mainActivity.mDiskLruCache.get(key);
+            bitmap = BitmapFactory.decodeStream(snapshot.getInputStream(0));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    @Override
+    protected void onPostExecute(Bitmap bitmap) {
+        super.onPostExecute(bitmap);
+        mDialog.dismiss();
+        MainActivity mainActivity = mActivitySoftReference.get();
+        if (mainActivity != null) {
+            if (bitmap != null) {
+                //网络加载成功，给 ImageView 设置图片
+                mainActivity.mImageView.setImageBitmap(bitmap);
+            }
+        }
+    }
+}
+```
 
 `DiskLruCache` 的 `get` 方法会返回一个 `editor` 对象，通过 `editor.newOutPutStream(int index)` 可以拿到输出流，然后就可以向缓存中写入数据。如果当前 `value` 正在被编辑，也就是 `get` 已经调用，那么 `get` 方法将返回 `null`。数据写入完成后需要调用 `editor.commit()` 进行提交，如果写入出错还可以调用 `editor.abort()`  取消写入。
 
 如果需要通过`BitmapFactory.Options`来进行缩放，为了避免第一次解析输入流的尺寸后，再一次通过解析输入流获取`Bitmap`为`null`,可以通过`FileDescriptor`来进行尺寸解析： 
-![code10](/assets/img/post/code/170725_10.png)
+```java
+DiskLruCache.Snapshot snapshot = mDiskLruCache.get(key);
+    if(snapshot!=null){
+        FileInputStream fileInputStream = (FileINputStream)snapshot.getInputStream(0);
+        FileDescriptor fd = fileInputStream.getFD();
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        //解析尺寸
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFileDescriptor(fd,null,options);
+        //计算并设置 inSampleSize
+        //....
+        //解析图片
+        options.inJustDecodeBounds = false;
+        Bitmap bitmap = BitmapFactory.decodeFileDescriptor(fd,null,options);
+}
+``` 
 
 由于 `DiskLruCache` 对 key 有限制，所以这里用了一个 `keyForUrl(String url)` 方法来获得 url 的 MD5 值，并以此作为 key :   
-![code11](/assets/img/post/code/170725_11.png)
+```java
+private String keyForUrl(String url) {
+    String key;
+    try {
+        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+        messageDigest.update(url.getBytes());
+        key = bytesToHexString(messageDigest.digest());
+    } catch (NoSuchAlgorithmException e) {
+        key = url.hashCode() + "";
+    }
+    return key;
+}
+//将字节转换成十六进制字符
+private String bytesToHexString(byte[] digest) {
+    StringBuilder sb = new StringBuilder();
+    for (byte digestByte : digest) {
+        String hex = Integer.toHexString(0xff & digestByte);
+        if (hex.length() == 1) {
+            sb.append("0");
+        }
+        sb.append(hex);
+    }
+    return sb.toString();
+}
+```  
 
 
 - 其他 API
@@ -148,12 +399,28 @@ Bitmap 文件(`.bmp`)一般不直接用于网络传输而是使用 `.jpg` 等压
 ## 优化列表卡顿
 在使用 `RecyclerView`、`ListView` 或者 `GridView` 时，需要同时加载多张图片，如果这时候用户滚动列表过于频繁，就会同时启动许多图片加载任务，造成页面卡顿，滚动不流畅。  
 解决这个问题的办法就是通过 `setOnScrollChangedListener()` 为布局添加滚动事件监听，在 `OnScrollChangedListener` 当布局滚动时，停止加载；当布局停止滚动后，再开始加载对应图片。  
-以 `ListView` 为例：  
-![code12](/assets/img/post/code/170725_12.png)
+以 `ListView` 为例： 
+
+```java
+listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+    @Override
+        public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {//停止滚动
+            //开始加载图片
+            } else {
+            //停止加载图片
+            }
+    }
+});
+``` 
 
 如果使用以上方法后还有明显卡顿，可以在 `AndroidManifest.xml` 中为相应的 `Activity` 开启硬件加速。   
  
-![code13](/assets/img/post/code/170725_13.png)
+```xml
+<activity android:name=".MainActivity"
+          android:hardwareAccelerated="true">
+</activity>
+```
 
 ## 总结
 `Bitmap` 加载主要会遇到内存占用过大和缓存的问题：通过缩放，可以减少应用内存占用，避免 `OOM` 的出现；通过内存和存储设备缓存，为用户节省流量，提高加载速度；另外还需要注意列表同时加载多张图片时的卡顿问题。  

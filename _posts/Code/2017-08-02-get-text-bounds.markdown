@@ -5,7 +5,6 @@ date: 2017-08-02 21:01:00 +0800
 tags: [Code,Android]
 comments: true
 subtitle: "一个字符引发的喜剧"
-code-link: "assets/code/170802.md"
 ---
 最近在跟着 [HenCoder](http://hencoder.com/) （一个很贴心的技术博客，作者之前是 `Flipboard` 的 `Android` 工程师，现在全职做这个博客）学习 Android 中自定义 View 绘制的内容，这篇文章说的是我在练习过程中的一个小问题。
 
@@ -38,20 +37,43 @@ code-link: "assets/code/170802.md"
 回到刚才 Demo 中的的问题，使文字垂直居中的方法肯定是将文字绘制位置往下移，问题就是移多少了。   
 
 先来看下当前文字是怎么被绘制的：
-![code01](/assets/img/post/code/170802_01.png)
+```java
+//chars ：所有要绘制的字符
+//middle ：View 中矩形中心线的 y 轴坐标
+for (int i = 0; i < chars.length; i++) {
+    //绘制每一个字符
+    canvas.drawText(chars, i, 1, 70 + 100 * i, middle, paint2);
+}
+``` 
 
 >这里使用方法的是 `canvas.drawText(char[] text, int index, int count, float x, float y,Paint paint)`。参数 `index` 是要绘制文字在`text`数组的起始位置，`count` 是要绘制的文字个数。 
 
 通过代码可以知道，当前文字的基线位置就是矩形中心线。我迷之自信的认为：向下偏移量应该是文字高度的一半，于是我就写下了如下代码：   
 
-![code02](/assets/img/post/code/170802_02.png)
+```java
+for (int i = 0; i < chars.length; i++) {
+    //获取文字边界信息,textBound 是用于接收文字边界信息的 Rect 
+    paint2.getTextBounds(chars, i, 1, textBound);
+    //y 轴偏移量设置为文字高度一半
+    int yOffset = textBound.height() / 2;
+    //绘制每一个字符
+    canvas.drawText(chars, i, 1, 70 + 100 * i, middle + yOffset, paint2);
+}
+``` 
 
 运行之后效果如下：
 ![wrong_draw](/assets/img/post/wrong_draw.jpg)  
 这样看上去，除了那个 `j` 以外，别的字符看起来符合要求。这就有点奇怪了，如果是方法有问题，那为什么别的字符都正常呢？   
 
 我用 Log 把 `textBound` 的 `top`、`bottom` 都打了出来：  
-![code03](/assets/img/post/code/170802_03.png)
+```
+D/Practice13GetTextBounds: correctDraw: A top=-114,bottom=0
+D/Practice13GetTextBounds: correctDraw: a top=-87,bottom=2
+D/Practice13GetTextBounds: correctDraw: J top=-114,bottom=2
+D/Practice13GetTextBounds: correctDraw: j top=-116,bottom=35
+D/Practice13GetTextBounds: correctDraw: Â top=-144,bottom=0
+D/Practice13GetTextBounds: correctDraw: â top=-120,bottom=2
+``` 
 
 可以看到 `top` 是负值，而 `bottom` **却因字符的不同有时为正有时为负**。
 
@@ -66,7 +88,14 @@ code-link: "assets/code/170802.md"
 
 ## 正确的画法
 暂时没了头绪，突然想到看一下「答案」，也就是作者的源码，发现作者是这样写的：    
-![code04](/assets/img/post/code/170802_04.png)
+```java
+for (int i = 0; i < chars.length; i++) {
+    paint2.getTextBounds(chars, i, 1, textBound);
+    int textMiddle = (textBound.top + textBound.bottom) / 2;
+    int yOffset = - textMiddle;
+    canvas.drawText(chars, i, 1, 70 + 100 * i, middle + yOffset, paint2);
+}
+```  
 
 照着敲了一遍，果然那个 `j` 正常了，我却更迷惑了。
 
@@ -112,7 +141,25 @@ code-link: "assets/code/170802.md"
 4. 看这个矩形是不是正好把文字包围起来。如果是，那么 `getTextBounds()` 的效果确实如假设那样，是以（0，0）为文字的基线。
 
 那就以那个特殊的 j 为例吧，代码如下：  
-![code05](/assets/img/post/code/170802_05.png)
+```java
+@Override
+protected void onDraw(Canvas canvas) {
+    super.onDraw(canvas);
+    //chars = {'j'};
+    //1.获得包围文字边界的矩形
+    paint2.getTextBounds(chars, 0, 1, textBound);
+    //2.文字基线位置向正方向偏移 300 后绘制文字
+    int offset = 300;
+    canvas.drawText(chars, 0, 1, 0 + offset, 0 + offset, paint2);
+    //3.平移矩形（给矩形边界加上偏移量）
+    textBound.top += offset;
+    textBound.bottom += offset;
+    textBound.left += offset;
+    textBound.right += offset;
+    //4.绘制矩形
+    canvas.drawRect(textBound, paint3);
+}
+```
   
 接下来就是见证奇迹的时刻：
 ![j](/assets/img/post/prove.jpg)
@@ -139,7 +186,14 @@ code-link: "assets/code/170802.md"
 是的，他们也只是「看起来垂直居中」。之所以会看起来居中，是因为它们的 `bottom` 值都和 `0` 很接近。   
 
 再来看一遍 Log 就知道了 :  
-![code06](/assets/img/post/code/170802_06.png)
+```
+D/Practice13GetTextBounds: correctDraw: A top=-114,bottom=0
+D/Practice13GetTextBounds: correctDraw: a top=-87,bottom=2
+D/Practice13GetTextBounds: correctDraw: J top=-114,bottom=2
+D/Practice13GetTextBounds: correctDraw: j top=-116,bottom=35
+D/Practice13GetTextBounds: correctDraw: Â top=-144,bottom=0
+D/Practice13GetTextBounds: correctDraw: â top=-120,bottom=2
+```
 
 还是通过计算来说明这个问题，按照我的计算方法（ `yOffset = ( bottom - top ) / 2`）和正确的计算方法（`yOffset = -( top + bottom ) / 2`）分别计算`yOffset`，结果如下表：   
 
