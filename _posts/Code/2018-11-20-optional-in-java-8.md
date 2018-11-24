@@ -3,7 +3,7 @@ layout: post
 title: "Java 8 中的 Optional"
 date: 2018-11-20 16:51:00 +0800
 tags: [Code,Java,Kotlin]
-subtitle: ""
+subtitle: "以及与 Kotlin 的可空类型对比"
 ---
 >本文主要介绍了 Java 8 中的可空类型 Optional 的使用及源码分析，并和 Kotlin 中的可空类型进行了对比。
 
