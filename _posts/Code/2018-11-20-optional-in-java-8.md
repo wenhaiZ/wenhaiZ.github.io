@@ -8,7 +8,7 @@ subtitle: "以及与 Kotlin 的可空类型对比"
 >本文主要介绍了 Java 8 中的可空类型 Optional 的使用及源码分析，并和 Kotlin 中的可空类型进行了对比。
 
 ## NullPointerException
-相信每个使用过 Java 的人都曾遇到过 `NullPointerException` 这个异常，这是一个很常见的异常，大家都知道怎么回事。  
+相信每个使用过 Java 的人都曾遇到过 `NullPointerException` ，这是一个很常见的异常，大家都知道怎么回事。  
 
 处理它的时侯，我们可以从代码逻辑上保证某个变量一定不会为 `null`，但更多时候，我们需要通过 `if` 语句来判断即将操作的变量是否为空，如果不为空，再继续操作它，就像下面这样：  
 
@@ -36,7 +36,7 @@ if(programmer != null){
 
 在我看来，Java 的变量声明有一点自相矛盾的地方。 
 
-比如声明一个类型为 Student 的变量 s, `Student s` 这句代码的意思是 **s 是一个 Student 类型的变量，它可能为空**，也就是说，Student 这个类型本身就有着可能为空的含义，但是，`null instanceof Student` 这个表达式的值却永远为`false`，这就和声明变量时的含义产生了歧义。
+比如声明一个类型为 `Student` 的变量 `s`, `Student s` 这句代码的意思是 **s 是一个 Student 类型的变量，它可能为空**，也就是说，`Student` 这个类型本身就有着可能为空的含义，但是，`null instanceof Student` 这个表达式的值却永远为`false`，这就和声明变量时的含义产生了歧义。
 
 所以我认为，虽然 Java 类型本身包含了可空的含义，却没有从语法上对可空类型进行支持，它需要程序员时刻记着变量可能为空，稍不留神，就可能得到`NullPointerException`。  
 
@@ -45,21 +45,21 @@ if(programmer != null){
 好消息是，在 Java 8 中，可以通过 `java.util.Optional` 这个类更加清楚的说明某个变量可能为空，从而更好的处理“值缺失”的情况，让代码更简洁也更安全。
 
 ## Optional 使用
-Optional 的中文意思是可选的，也就是说，这个值可能有也可能没有。  
+`Optional` 的中文意思是可选的，也就是说，这个值可能有也可能没有。  
 简单来说，它就是个容器，里面包裹了一个可能为`null`的值。  
 
-Optional 支持泛型，比如想表示一个程序员，他可能有女朋友，也可能没有，就可以使用 `Optional` 来表示：
+`Optional` 支持泛型，比如想表示一个程序员，他可能有女朋友，也可能没有，就可以使用 `Optional` 来表示：
 ```java
 class Programmer{
     private Optional<GirlFriend> girlFriend;
 }
 ```
-如果在 IDEA 里写下上面的代码，会得到一个 warning:
+如果在 Intellij IDEA 里写下上面的代码，会得到下面的 warning:
 >*Optional was designed to provide a limited mechanism for library method return types where there needed to be a clear way to represent "no result". Using a field with type java.util.Optional is also problematic if the class needs to be Serializable, which java.util.Optional is not.*  
 
 也就是说， **Optional 最好用于标记库方法的返回值，而不是类字段**，因为可能会面临序列化的问题。  
 
-所以，我们可以把上面的代码改成下面这样，就比较符合 Optional 的设计理念：
+所以，我们可以把上面的代码改成下面这样（当然，如果不涉及序列换问题，不改也无伤大雅），就比较符合 Optional 的设计理念：
 ```java
 public class Programmer {
 
@@ -98,7 +98,7 @@ if (girlFriend.isPresent()){
 ```java
 GirlFriend girlFriend = p.getGirlFriend()!=null ? p.getGirlFriend() : new GirlFriend("Lisa");
 ```
-借助 Optioal 的 `orElse` 方法，上面代码可以更简单：
+借助 Optional 的 `orElse` 方法，上面代码可以更简单：
 ```java
 GirlFriend girlFriend = p.getGirlFriend().orElse(new GirlFriend("Lisa"));
 ```  
@@ -142,7 +142,7 @@ Optional<GirlFriend> girlFriend = maybeProgrammer.map(Programmer::getGirlFriend)
 ```
 Java 8 为 [`Stream`](https://www.ibm.com/developerworks/cn/java/j-lo-java8streamapi/index.html) 类也提供了一个 `map` 方法，它的作用是对于流中的每个元素应用 `map` 方法中传入的操作。    
 
-`Optional` 的 `map` 方法与之类似，如果 `Optional` 包含的对象不是空的，那么对其应用 `map` 方法传入的操作，否则就什么也不做。
+`Optional` 的 `map` 方法与之类似，如果 `Optional` 包含的对象不是空的，那么对其应用 `map` 方法传入的操作，否则就返回一个空的 `Optional`。
 
 结合 `map` 和 `filter` 两个方法，可以将上面未使用 `Optional` 的代码更改如下：
 ```java
@@ -170,7 +170,7 @@ String city = programmer.map(Programmer::getGirlFriend)
 ```
 但是，这段代码会编译失败。   
 
-原因就是 `programmer` 的类型是 `Optional<Programmer>`，可以通过 `map` 方法执行 `getGirlFriend` 方法，而 `getGirlFriend` 方法返回值类型是 `Optional<GirlFriend>`，这样一来，`programmer.map(Programmer::getGirlFriend)`  返回的类型就是 `Optional<Optional<GirlFriend>>` ，因此就不能通过 `map` 方法来调用 `GirlFriend` 的 `getAddress` 方法。（原因会在后面源码解析的部分讲）
+原因就是在这个例子中， `programmer` 的类型是 `Optional<Programmer>`，可以通过 `map` 方法执行 `getGirlFriend` 方法，而 `getGirlFriend` 方法返回值类型是 `Optional<GirlFriend>`，这样一来，`programmer.map(Programmer::getGirlFriend)`  返回的类型就是 `Optional<Optional<GirlFriend>>` ，因此就不能通过 `map` 方法来调用 `GirlFriend` 的 `getAddress` 方法。（原因会在后面源码解析的部分讲）
 
 那如何解决 `Optional` 的嵌套问题呢？    
 
@@ -243,7 +243,7 @@ public static<T> Optional<T> empty() {
 }
 ```
 
-`Optional` 的实例方法涉及 Java 8 中的几个函数式接口，先来看 `ifPresent` 方法。
+`Optional` 的实例方法涉及 Java 8 中的几个**函数式接口**，先来看 `ifPresent` 方法。
 
 ### `Optional#ifPresent`
 ```java
