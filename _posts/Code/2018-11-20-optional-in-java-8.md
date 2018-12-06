@@ -92,6 +92,16 @@ if (girlFriend.isPresent()){
 
 `Optional` 类提供了一系列方法，来帮助我们更好的使用它来替换掉原来的 `null` 检查。
 
+### 使用 `ifPresent` 方法避免 `null` 检查
+对于上面的代码，可以通过 `ifPresent` 方法配合 Java 8 新引入的 [Lambda 表达式](https://www.oracle.com/technetwork/articles/java/architect-lambdas-part1-2080972.html)来简化：   
+
+```java
+Programmer p = new Programmer();
+p.getGirlFriend().ifPresent(
+    girlFriend -> System.out.println(girlFriend.getName())
+);
+```
+
 ### 使用 `orElse` 方法提供默认值  
 
 如果需要在值为 `null` 时返回一个默认值，通常可以这么做：
@@ -117,7 +127,7 @@ if(girl != null && "Alice".equals(girl.getName())){
     System.out.println("ok");
 }
 ```
-`Optional` 提供了一个 `filter` 方法，借助 Java 8 新引入的 [Lambda 表达式](https://www.oracle.com/technetwork/articles/java/architect-lambdas-part1-2080972.html)，可以很简单的完成这样的操作：
+`Optional` 提供了一个 `filter` 方法，借助 Lambda 表达式，可以很简单的完成这样的操作：
 ```java
 Optional<GirlFriend> maybeGirlFriend = ...;
 maybeGirlFriend.filter(girl -> "Alice".equals(girl.getName())
@@ -358,7 +368,7 @@ public interface Function<T, R> {
 
 那 `flatMap` 为什么就不会出现 `Optional` 嵌套呢？看了代码就知道：
 
-### Optional#flatMap()
+### `Optional#flatMap()`
 ```java
 public <U> Optional<U> flatMap(Function<? super T, Optional<U>> mapper) {
     Objects.requireNonNull(mapper);
