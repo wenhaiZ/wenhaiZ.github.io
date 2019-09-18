@@ -98,4 +98,31 @@ class _MyAppState extends State<MyApp> {
 
 ## 2."match_parent" 和 "wrap_content"
 
+- `MATCH_PARENT`:即控件想和父控件一样大，如果你的控件是顶级根控件，那么它将和屏幕一样大。
+- `WRAP_CONTENT`:即控件的大小刚好够包围它的内容。  
+
+为了获得与`match_parent`和`wrap_content`一样的行为，我们需要用到 Row和 Column 的`mainAxisSize`属性，这个属性接收`MainAxisSize`枚举。`MainAxisSize`有两个值，`MainAxisSize.min`即`wrap_content`,`MainAxisSize.max` 即`match_parent`。  
+
+在上面的例子中，我们并没有给`Row`指定`mainAxisSize`属性，所以它将默认设为`MainAxisSize.max`，即`match_parent`。黄色背景展示了容器的剩余空间是如何被覆盖的。下面代码演示了在上面例子如何指定`mainAxisSize`属性，不同值对应的输出结果如下图所示。
+```dart
+....
+body: Container(
+  color: Colors.yellowAccent,
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [...],
+  ),
+)
+...
+```
+
+![](/assets/img/post/main_axis_size.png)  
+
+这样我们就可以从视觉上区分 `mainAxisSize` 的不同值是如何应用在 Row 和 Column上的。
+
+## 3.Gravity
+
+### 1.[MainAxisAlignment](https://docs.flutter.io/flutter/rendering/MainAxisAlignment-class.html):
+### 2.[CrossAxisAlignment](https://docs.flutter.io/flutter/rendering/CrossAxisAlignment-class.html):
+
 
