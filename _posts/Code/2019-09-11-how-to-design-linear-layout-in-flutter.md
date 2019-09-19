@@ -182,5 +182,84 @@ body: Container(
 `stretch`表现的有点不一样，它把控件拉伸以占满交叉轴剩余的空间（`match_parent`）。     
 
 ## 4.布局比重(Layout Weight))
+为了创建一个子控件平分空间或按一定比例使用空间的线性布局，我们把每个控件的`android:layout_height`设为`0dp`(垂直方向)或者把每个控件的`android:layout_width`设为`0dp`(水平方向)，然后把每个控件的`android:layout_weight`设为 1 或者其他你想要分配的值。   
 
+在 Flutter 中，为了使用 Row和 Column 达到相同的效果，我们用一个`Expanded`控件来包裹 `Row/Column` 的子控件。`Expanded`控件有一个`flex`属性，和`android:layout_weight`作用是一样的，因此通过指定`flex`的值我们就能指定子控件所占的空间比。  
+
+下面代码演示了如何定义控件的`flex`值：
+```dart
+import 'package:flutter/material.dart';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text("LinearLayout Example"),
+        ),
+        body: Container(
+          color: Colors.yellowAccent,
+          child: Container(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    child: Icon(
+                      Icons.access_time,
+                      size: 50.0,
+                    ),
+                    color: Colors.red,
+                  ),
+                  flex: 2,
+                ),
+                Expanded(
+                  child: Container(
+                    child: Icon(
+                      Icons.pie_chart,
+                      size: 100.0,
+                    ),
+                    color: Colors.blue,
+                  ),
+                  flex: 4,
+                ),
+                Expanded(
+                  child: Container(
+                    child: Icon(
+                      Icons.email,
+                      size: 50.0,
+                    ),
+                    color: Colors.green,
+                  ),
+                  flex: 6,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+```   
+
+为了便于理解，我们将每个图标用一个带背景色的容器控件包裹起来，这样容易看出它们占用了多少空间：
+![](/assets/img/post/expanded_flex.png)   
+
+## 总结
+
+和 Android 中的 LinearLayout 一样，Row 和 Column 在 Flutter 中也是被重度使用的控件，希望在接下来的博客中讨论更多内容。  
+
+我创建了一个样例 App 来演示Row 和 Column 的 属性以及它们组合起来使用的效果。   
+
+你可以看下[这个例子](https://github.com/burhanrashid52/FlutterForAndroidExample)。   
+
+感谢阅读。
 
