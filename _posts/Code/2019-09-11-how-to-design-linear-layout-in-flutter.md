@@ -120,9 +120,28 @@ body: Container(
 
 这样我们就可以从视觉上区分 `mainAxisSize` 的不同值是如何应用在 Row 和 Column上的。
 
-## 3.Gravity
+## 3.重力(Gravity)
+重力指定了子控件如何在自身范围内定位其内容，我们在LinearLayout中使用`android:gravity=”center”`属性指定重力，这个属性接收多个标识如何对齐的值。在Row和Column中，我们可以使用`MainAxisAlignment`和`CrossAxisAlignment`达到同样的效果。
 
-### 1.[MainAxisAlignment](https://docs.flutter.io/flutter/rendering/MainAxisAlignment-class.html):
+### 1.[MainAxisAlignment](https://docs.flutter.io/flutter/rendering/MainAxisAlignment-class.html):  
+这个属性指定了子控件在主轴方向上如何被放置。为了让这个属性生效，在Row和Column中必须有剩余空间。如果你将`mainAxisSize`属性设为`MainAxisSize.min`,那么设置`MainAxisAlignment`属性将会没有效果，因为没有剩余空间可用。我们可以像下面这样指定`MainAxisAlignment`属性：
+```dart
+....
+body: Container(
+  color: Colors.yellowAccent,
+  child: Row(
+    mainAxisSize: MainAxisSize.max,
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [...],
+  ),
+)
+...
+```
+>一图胜千言，与其用语言描述每个属性，不如用图片来展示更直观。
+
 ### 2.[CrossAxisAlignment](https://docs.flutter.io/flutter/rendering/CrossAxisAlignment-class.html):
+
+
+## 4.布局比重(Layout Weight))
 
 
