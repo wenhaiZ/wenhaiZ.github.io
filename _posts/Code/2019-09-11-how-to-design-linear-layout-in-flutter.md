@@ -139,8 +139,47 @@ body: Container(
 ```
 >一图胜千言，与其用语言描述每个属性，不如用图片来展示更直观。
 
-### 2.[CrossAxisAlignment](https://docs.flutter.io/flutter/rendering/CrossAxisAlignment-class.html):
+下面的输出比较了 `LinearLayout` 的属性和 `Row` 的`MainAxisAlignment`属性。  
 
+![](/assets/img/post/linearlayout_row.png)  
+
+然后我们来比较一下`Column`部件：   
+
+![](/assets/img/post/linearlayout_column.png)   
+
+>**练习**：你可以试下其他的枚举：`spaceEvenly`,`spaceAround`,`spaceBetween`,它们与`ConstraintLayout`中用到了水平/垂直链（chain）行为一致。 
+
+
+
+### 2.[CrossAxisAlignment](https://docs.flutter.io/flutter/rendering/CrossAxisAlignment-class.html):
+这个属性指定了子控件在交叉轴方向如何放置。即如果我们使用`Row`部件，那么子控件的重力则基于垂直线；如果我们 使用`Column`部件，那么子控件的重力则基于水平线。   
+
+这听起来有点让人费解，不过随着继续阅读你将会理解它。  
+
+为了便于理解 ，我们将`mainAxisSize`设为`MainAxisSize.min`。你可以像下面代码一样声明`CrossAxisAlignment`属性，如果没有设置，那么默认值为`CrossAxisAlignment. start`。  
+
+```dart
+....
+body: Container(
+  color: Colors.yellowAccent,
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [...],
+  ),
+)
+...
+```  
+
+下图比较了LinearLayout 的属性和`Row`的`CrossAxisAlignment`属性：  
+
+![](/assets/img/post/linearlayout_row_cross.png)   
+
+下面再来看看`Column`属性：
+![](/assets/img/post/linearlayout_column_cross.png) 
+
+
+`stretch`表现的有点不一样，它把控件拉伸以占满交叉轴剩余的空间（`match_parent`）。     
 
 ## 4.布局比重(Layout Weight))
 
