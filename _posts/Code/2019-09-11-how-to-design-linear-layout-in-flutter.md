@@ -257,7 +257,9 @@ class _MyAppState extends State<MyApp> {
 
 和 Android 中的 LinearLayout 一样，Row 和 Column 在 Flutter 中也是被重度使用的控件，希望在接下来的博客中讨论更多内容。  
 
-我创建了一个样例 App 来演示Row 和 Column 的 属性以及它们组合起来使用的效果。   
+我创建了一个样例 App 来演示Row 和 Column 的 属性以及它们组合起来使用的效果。 
+
+![](/assets/img/post/app_row_column.gif)  
 
 你可以看下[这个例子](https://github.com/burhanrashid52/FlutterForAndroidExample)。   
 
