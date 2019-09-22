@@ -11,7 +11,7 @@ subtitle: "答案是... Scaffold"
 
 -----------------
 
-这篇博客是为那些想把现有的开发知识应用 Flutter 的 Android 开发者写的。在这篇文章里，我们将会探索在 Flutter 里与 Activity 对应的是什么。 
+这篇博客是为那些想把现有的开发知识应用到 Flutter 的 Android 开发者写的。在这篇文章里，我们将会探索在 Flutter 里与 Activity 对应的是什么。 
 
 ## 博客系列
 - 在 Flutter 中如何设计 Activity 界面 (本篇)
