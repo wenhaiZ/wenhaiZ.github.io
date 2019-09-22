@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "[译]在 Flutter 中如何设计线性布局?"
-date: 2019-09-06 10:51:00 +0800
+date: 2019-09-22 11:17:00 +0800
 tags: [Code,Flutter]
 subtitle: "Row/Column"
 published: true
