@@ -6,7 +6,7 @@ tags: [Code,Flutter]
 subtitle: "Row/Column"
 published: true
 ---
-**作者：Burhanuddin Rashid，Google 认证 Android 开发者**
+>**原文作者：Burhanuddin Rashid，Google 认证 Android 开发者**
 
 > 原文链接：[Flutter For Android Developers : How to design LinearLayout in Flutter.](https://proandroiddev.com/flutter-for-android-developers-how-to-design-linearlayout-in-flutter-5d819c0ddf1a)
 

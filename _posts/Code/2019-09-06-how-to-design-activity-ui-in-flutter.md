@@ -5,7 +5,7 @@ date: 2019-09-06 10:51:00 +0800
 tags: [Code,Flutter]
 subtitle: "答案是... Scaffold"
 ---
-**作者：Burhanuddin Rashid，Google 认证 Android 开发者**
+>**原文作者：Burhanuddin Rashid，Google 认证 Android 开发者**
 
 > 原文链接：[Flutter For Android Developers : How to design Activity UI in Flutter.](https://blog.usejournal.com/flutter-for-android-developers-how-to-design-activity-ui-in-flutter-4bf7b0de1e48)
 
