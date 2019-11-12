@@ -4,6 +4,7 @@ title: "关于「挂科」"
 date: 2018-03-30 11:34:00 +0800
 tags: [Life]
 subtitle: ""
+published: false
 ---
 前几天补考成绩出来了，是时候记录一下我挂科的故事了。    
 

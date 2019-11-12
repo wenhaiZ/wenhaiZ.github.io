@@ -4,6 +4,7 @@ title: "推荐一张专辑"
 date: 2018-05-19 19:45:00 +0800
 tags: [Life]
 subtitle: "Voicenotes by Charlie Puth"
+published: false
 ---
 2018 年 5 月 11 日，也就是上周五，Charlie Puth 发布了第二张独立创作的录音室专辑《Voicenotes》。将整张专辑听了几遍后，我决定推荐这张专辑。
 

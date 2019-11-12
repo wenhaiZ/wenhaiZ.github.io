@@ -5,6 +5,7 @@ date: 2018-05-24 14:33:00 +0800
 tags: [Life]
 subtitle: "Lauv 和他的 13 首歌"
 header-img: "assets/img/post/lauv_header.jpg"
+published: false
 ---
 忘记是在什么时候听到 Lauv 的歌了，但我记得听的第一首歌是 **The Story Never Ends**。   
 

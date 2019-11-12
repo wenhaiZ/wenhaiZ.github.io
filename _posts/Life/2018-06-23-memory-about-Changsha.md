@@ -5,6 +5,7 @@ date: 2018-06-23 00:13:00 +0800
 tags: [Life]
 subtitle: "时间改变了很多又什么都没有"
 header-img: "assets/img/post/changsha.JPG"
+published: false
 ---
 2018 年 6 月 21 日傍晚，我坐上了从长沙开往北京西的 Z2 次列车。  
 
