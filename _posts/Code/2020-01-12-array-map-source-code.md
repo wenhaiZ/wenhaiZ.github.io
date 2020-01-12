@@ -431,7 +431,7 @@ mSize++;
 
 这样我们就搞清楚了 ArrayMap 到底是怎么存储 hashCode、key 和 value 的，它们之间的关系如下图所示：
 
-![mHashes mArray &#x5143;&#x7D20;&#x5BF9;&#x5E94;&#x5173;&#x7CFB;](../../.gitbook/assets/wei-ming-ming-wen-jian.jpg)
+![mHashes mArray &#x5143;&#x7D20;&#x5BF9;&#x5E94;&#x5173;&#x7CFB;](/assets/img/post/mhash_marray.jpg)
 
 ### 插入新的映射
 
@@ -574,7 +574,7 @@ static Object[] mBaseCache;
 
 所以 mBaseCache 里的内容如下图所示：
 
-![mBaseCache &#x7F13;&#x5B58;&#x793A;&#x610F;&#x56FE;](../../.gitbook/assets/wx20200111-100701-2x.png)
+![mBaseCache &#x7F13;&#x5B58;&#x793A;&#x610F;&#x56FE;](/assets/img/post/arraymap_basecache.png)
 
 > 虽然 BASE\_SIZE 是4，但实际 mBaseCache 缓存的数组容量是8，4是映射对的数量，也就是mHashes 的大小。
 
